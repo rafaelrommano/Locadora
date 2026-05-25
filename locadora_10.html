@@ -670,6 +670,17 @@
   .trailer-btn:hover { box-shadow: 6px 6px 0 var(--neon-orange) !important; }
   .trailer-btn:disabled { animation: none; }
 
+  .deezer-btn {
+    background: #191922 !important;
+    color: white !important;
+    border: 2px solid #ef5466 !important;
+    box-shadow: 4px 4px 0 #ef5466 !important;
+    animation: neon-pulse 1.5s infinite;
+  }
+  .deezer-btn:hover {
+    box-shadow: 6px 6px 0 #ef5466 !important;
+  }
+
   @keyframes trailer-glow {
     0%, 100% { box-shadow: 4px 4px 0 var(--neon-orange), 0 0 0 rgba(0,240,255,0); }
     50% { box-shadow: 4px 4px 0 var(--neon-orange), 0 0 15px rgba(0,240,255,0.6); }
@@ -1597,15 +1608,7 @@
   .vhs-loading-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to right,
-      #d9d9d9 0%, #d9d9d9 14.28%,
-      #d9d900 14.28%, #d9d900 28.56%,
-      #00d9d9 28.56%, #00d9d9 42.84%,
-      #00d900 42.84%, #00d900 57.12%,
-      #d900d9 57.12%, #d900d9 71.4%,
-      #d90000 71.4%, #d90000 85.68%,
-      #0000d9 85.68%, #0000d9 100%
-    );
+    background: black;
     font-family: 'VT323', monospace;
     display: flex;
     flex-direction: column;
@@ -1614,7 +1617,6 @@
     z-index: 5;
     pointer-events: none;
     transition: opacity 0.5s ease;
-    animation: chewed-shake 0.18s infinite, vhs-color-glitch 4s steps(4) infinite;
     overflow: hidden;
   }
   .vhs-tracking-line {
@@ -3234,7 +3236,7 @@ ${baseRules}`;
       <div class="trailer-frame-wrap">
         <div id="yt-player-container"></div>
         <div class="vhs-loading-overlay" id="vhs-loading-overlay">
-          <div class="chewed-glitch-bars"></div>
+          <img src="https://media.giphy.com/media/11v8gJRwB2fE3u/giphy.gif" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; mix-blend-mode: screen;">
           <div class="vhs-tracking-line"></div>
           <div class="vhs-play-indicator">PLAY ▶</div>
           <div class="vhs-time-counter">${displayTime}</div>
@@ -3426,6 +3428,57 @@ ${baseRules}`;
     `;
   }
 
+  // ============ DEEZER API ============
+  function fetchDeezerSoundtrack(title) {
+    return new Promise((resolve) => {
+      const callbackName = 'deezerCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+      window[callbackName] = function(data) {
+        delete window[callbackName];
+        if (data && data.data && data.data.length > 0) {
+          resolve(data.data[0].id);
+        } else {
+          resolve(null);
+        }
+      };
+      const script = document.createElement('script');
+      script.src = `https://api.deezer.com/search/playlist?q=${encodeURIComponent(title + ' soundtrack')}&output=jsonp&callback=${callbackName}`;
+      script.onload = () => script.remove();
+      script.onerror = () => { delete window[callbackName]; resolve(null); script.remove(); };
+      document.body.appendChild(script);
+    });
+  }
+
+  function playDeezerPlaylist(btn, title) {
+    sfx.click();
+    const playlistId = btn.dataset.playlistId;
+    if (!playlistId) return;
+    
+    let container = document.getElementById('deezer-widget-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'deezer-widget-container';
+      container.style.marginTop = '20px';
+      container.style.border = '2px solid #ef5466';
+      container.style.boxShadow = '0 0 15px rgba(239, 84, 102, 0.4)';
+      container.style.background = '#191922';
+      
+      const overview = btn.closest('.modal-content').querySelector('.modal-overview');
+      if (overview) {
+        overview.parentNode.insertBefore(container, overview.nextSibling);
+      }
+    }
+    
+    container.innerHTML = `
+      <div style="padding: 10px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-family: 'Press Start 2P', monospace; font-size: 11px; color: #ef5466; margin: 0;">🎵 TRILHA SONORA</h3>
+        <button onclick="this.parentElement.parentElement.remove(); sfx.click()" style="background:transparent; border:none; color:#ef5466; font-family:'Press Start 2P', monospace; font-size:14px; cursor:pointer; box-shadow:none; padding:0;">×</button>
+      </div>
+      <iframe title="deezer-widget" src="https://widget.deezer.com/widget/dark/playlist/${playlistId}" width="100%" height="300" frameborder="0" allowtransparency="true" allow="encrypted-media; clipboard-write" style="display:block;"></iframe>
+    `;
+    
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   // ============ MOVIE DETAIL MODAL ============
   // 🎲 EASTER EGG: chewed/jammed tape
   function showChewedTape(realMovieId) {
@@ -3525,6 +3578,9 @@ ${baseRules}`;
               <button onclick='toggleFavorite(${JSON.stringify({id:movie.id,title:movie.title,poster_path:movie.poster_path,release_date:movie.release_date}).replace(/'/g,"&apos;")})'>
                 ${isFav ? '★ NA ESTANTE' : '☆ ADICIONAR À ESTANTE'}
               </button>
+              <button id="deezer-btn-${movie.id}" class="deezer-btn hidden" onclick="playDeezerPlaylist(this, '${escapeAttr(movie.title)}')" style="margin-top: 10px;">
+                🎵 TRILHA SONORA
+              </button>
             </div>
           </div>
           <div>
@@ -3577,6 +3633,18 @@ ${baseRules}`;
               </div>` : ''}
           </div>
         </div>`;
+
+      // Busca a trilha sonora no Deezer
+      fetchDeezerSoundtrack(movie.title).then(playlistId => {
+        if (playlistId) {
+          const btn = document.getElementById(`deezer-btn-${movie.id}`);
+          if (btn) {
+            btn.classList.remove('hidden');
+            btn.dataset.playlistId = playlistId;
+          }
+        }
+      });
+
     } catch (err) {
       content.innerHTML = `<button class="modal-close" onclick="closeModal()">×</button><div class="error-msg">⚠ ${escapeHtml(err.message)}</div>`;
     }

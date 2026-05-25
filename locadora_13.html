@@ -1640,98 +1640,6 @@
     pointer-events: none;
   }
 
-  /* ============ OMDB & RAWG EXTRA STYLES ============ */
-  .omdb-awards-marquee {
-    background: #000;
-    color: var(--neon-yellow);
-    border: 2px solid var(--neon-yellow);
-    box-shadow: 0 0 10px rgba(255, 235, 0, 0.4);
-    padding: 6px 12px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-    animation: neon-pulse 2s infinite;
-  }
-  .omdb-awards-marquee span {
-    display: inline-block;
-    padding-left: 100%;
-    animation: marquee-scroll 15s linear infinite;
-  }
-  @keyframes marquee-scroll {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(-100%, 0); }
-  }
-
-  .omdb-rating-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: #000;
-    border: 1px dashed var(--neon-pink);
-    padding: 2px 8px;
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: #fff;
-    margin-right: 8px;
-  }
-  .omdb-rating-badge.rt::before { content: '🍅'; }
-  .omdb-rating-badge.mc::before { content: 'Ⓜ️'; color: #66cc33; }
-
-  .rawg-game-sticker {
-    margin-top: 15px;
-    border: 2px solid var(--neon-cyan);
-    background: rgba(0, 240, 255, 0.1);
-    box-shadow: 4px 4px 0 var(--neon-purple);
-    padding: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .rawg-game-sticker:hover {
-    transform: scale(1.05) rotate(-2deg);
-    z-index: 10;
-  }
-  .rawg-game-sticker::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%; right: -50%; bottom: -50%;
-    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
-    transform: translateY(100%);
-    transition: transform 0.4s;
-    pointer-events: none;
-  }
-  .rawg-game-sticker:hover::before { transform: translateY(-100%); }
-  .rawg-game-header {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--neon-yellow);
-    margin-bottom: 6px;
-    text-shadow: 1px 1px 0 #000;
-  }
-  .rawg-game-cover {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border: 1px solid #333;
-    image-rendering: pixelated;
-  }
-  .rawg-game-platform {
-    font-family: 'VT323', monospace;
-    font-size: 14px;
-    color: var(--neon-pink);
-    background: #000;
-    display: inline-block;
-    padding: 0 4px;
-    margin-top: 4px;
-    border: 1px solid var(--neon-pink);
-  }
-
   /* ============ DEEZER SOUNDTRACK SECTION ============ */
   @keyframes track-pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.4); }
@@ -2484,7 +2392,15 @@
   .vhs-loading-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: black;
+    background: linear-gradient(to right,
+      #d9d9d9 0%, #d9d9d9 14.28%,
+      #d9d900 14.28%, #d9d900 28.56%,
+      #00d9d9 28.56%, #00d9d9 42.84%,
+      #00d900 42.84%, #00d900 57.12%,
+      #d900d9 57.12%, #d900d9 71.4%,
+      #d90000 71.4%, #d90000 85.68%,
+      #0000d9 85.68%, #0000d9 100%
+    );
     font-family: 'VT323', monospace;
     display: flex;
     flex-direction: column;
@@ -2493,6 +2409,7 @@
     z-index: 5;
     pointer-events: none;
     transition: opacity 0.5s ease;
+    animation: chewed-shake 0.18s infinite, vhs-color-glitch 4s steps(4) infinite;
     overflow: hidden;
   }
   .vhs-tracking-line {
@@ -2699,7 +2616,7 @@
         </div>
         <span id="loyalty-badge" class="loyalty-badge" onclick="switchView('card')" title="Seus pontos de fidelidade">★ 0 pts</span>
         <button id="sfx-toggle" class="secondary" onclick="sfx.toggle()" title="Liga/Desliga sons">🔊</button>
-        <button class="secondary" onclick="openSettingsModal()" title="Configurações & Integrações">⚙</button>
+        <button class="secondary" onclick="resetApiKey()" title="Trocar chave">⚙</button>
       </div>
     </nav>
 
@@ -2723,38 +2640,6 @@
 <!-- TRAILER PLAYER -->
 <div id="trailer-overlay" class="trailer-overlay" onclick="if(event.target===this){ if(document.getElementById('rewind-prompt')) closeTrailerFull(); else closeTrailer(); }">
   <div class="trailer-modal" id="trailer-player"></div>
-</div>
-
-<!-- SETTINGS MODAL -->
-<div id="settings-overlay" class="modal-overlay" onclick="if(event.target===this) closeSettingsModal()">
-  <div class="modal" id="settings-content" style="max-width: 600px;">
-    <button class="modal-close" onclick="closeSettingsModal()">×</button>
-    <div class="modal-title" style="margin-bottom: 20px;">⚙ INTEGRAÇÕES RETRÔ</div>
-    <div style="font-family: 'VT323', monospace; font-size: 18px; color: #ccc; margin-bottom: 20px;">
-      Adicione chaves de APIs gratuitas para ativar features extras na sua locadora!
-    </div>
-    
-    <div class="api-input-row" style="margin-bottom: 15px; flex-direction: column; align-items: stretch;">
-      <label style="color: var(--neon-yellow); margin-bottom: 5px; font-weight: bold; font-family: 'VT323', monospace; font-size: 20px;">🍅 OMDb API (Críticas e Prêmios)</label>
-      <input type="text" id="omdb-key-input" placeholder="Sua OMDb API Key" autocomplete="off" style="margin-bottom: 5px;">
-      <small style="color: #888; font-family: 'VT323', monospace; font-size: 16px;">Pegue em omdbapi.com (traz notas do Metacritic, Rotten Tomatoes e prêmios da época).</small>
-    </div>
-
-    <div class="api-input-row" style="margin-bottom: 15px; flex-direction: column; align-items: stretch;">
-      <label style="color: var(--neon-cyan); margin-bottom: 5px; font-weight: bold; font-family: 'VT323', monospace; font-size: 20px;">🎮 RAWG API (Jogos de Época)</label>
-      <input type="text" id="rawg-key-input" placeholder="Sua RAWG API Key" autocomplete="off" style="margin-bottom: 5px;">
-      <small style="color: #888; font-family: 'VT323', monospace; font-size: 16px;">Pegue em rawg.io/apidocs (busca os jogos de SNES, PS1, etc baseados no filme).</small>
-    </div>
-
-    <div class="api-input-row" style="margin-bottom: 25px; flex-direction: column; align-items: stretch;">
-      <label style="color: var(--neon-pink); margin-bottom: 5px; font-weight: bold; font-family: 'VT323', monospace; font-size: 20px;">📺 GIPHY API (Gifs e Animações)</label>
-      <input type="text" id="giphy-key-input" placeholder="Sua Giphy API Key" autocomplete="off" style="margin-bottom: 5px;">
-      <small style="color: #888; font-family: 'VT323', monospace; font-size: 16px;">Pegue em developers.giphy.com (adiciona uma animação de TV ao ligar e stickers pela locadora).</small>
-    </div>
-
-    <button onclick="saveSettingsKeys()" style="width: 100%;">▶ SALVAR CONFIGURAÇÕES</button>
-    <button onclick="resetApiKey()" class="secondary" style="width: 100%; margin-top: 10px;">⚠ TROCAR CHAVE DO TMDB</button>
-  </div>
 </div>
 
 <!-- THE WITCH (floating button) -->
@@ -2874,9 +2759,6 @@
   const state = {
     apiKey: localStorage.getItem('tmdb_api_key') || '',
     geminiKey: localStorage.getItem('gemini_api_key') || '',
-    omdbKey: localStorage.getItem('omdb_api_key') || '',
-    rawgKey: localStorage.getItem('rawg_api_key') || '',
-    giphyKey: localStorage.getItem('giphy_api_key') || '',
     country: localStorage.getItem('tmdb_country') || 'BR-pt-BR',
     view: 'home',
     favorites: JSON.parse(localStorage.getItem('vhs_favorites') || '[]'),
@@ -3686,42 +3568,9 @@ ${baseRules}`;
           else closeTrailer();
         }
         else if (document.getElementById('witch-overlay').classList.contains('show')) closeWitch();
-        else if (document.getElementById('settings-overlay').classList.contains('show')) closeSettingsModal();
         else closeModal();
       }
     });
-  }
-
-  // ============ SETTINGS MODAL ============
-  function openSettingsModal() {
-    sfx.click();
-    document.getElementById('settings-overlay').classList.add('show');
-    document.getElementById('omdb-key-input').value = state.omdbKey || '';
-    document.getElementById('rawg-key-input').value = state.rawgKey || '';
-    document.getElementById('giphy-key-input').value = state.giphyKey || '';
-  }
-
-  function closeSettingsModal() {
-    document.getElementById('settings-overlay').classList.remove('show');
-  }
-
-  function saveSettingsKeys() {
-    sfx.clunk();
-    
-    const omdb = document.getElementById('omdb-key-input').value.trim();
-    const rawg = document.getElementById('rawg-key-input').value.trim();
-    const giphy = document.getElementById('giphy-key-input').value.trim();
-    
-    state.omdbKey = omdb;
-    state.rawgKey = rawg;
-    state.giphyKey = giphy;
-    
-    localStorage.setItem('omdb_api_key', omdb);
-    localStorage.setItem('rawg_api_key', rawg);
-    localStorage.setItem('giphy_api_key', giphy);
-    
-    closeSettingsModal();
-    showToast('Configurações salvas!', 'win');
   }
 
   async function saveApiKey() {
@@ -3734,12 +3583,6 @@ ${baseRules}`;
 
   async function tryStartApp() {
     document.getElementById('api-setup').classList.add('hidden');
-    
-    // Giphy transition if key exists
-    if (state.giphyKey) {
-      playGiphyTransition();
-    }
-    
     document.getElementById('app').classList.remove('hidden');
     try {
       const data = await tmdbFetch('/genre/movie/list');
@@ -3752,53 +3595,6 @@ ${baseRules}`;
           ${escapeHtml(err.message)}<br><br>
           <button onclick="resetApiKey()">VOLTAR E TENTAR DE NOVO</button>
         </div>`;
-    }
-  }
-
-  // ============ GIPHY API (Transitions) ============
-  async function playGiphyTransition() {
-    sfx.static(1.5);
-    try {
-      const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${state.giphyKey}&q=tv+static+glitch&limit=10&rating=g`);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (!data.data || !data.data.length) return;
-      
-      const gif = data.data[Math.floor(Math.random() * data.data.length)];
-      const imgUrl = gif.images.original.url;
-      
-      let overlay = document.getElementById('tv-glitch-overlay');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'tv-glitch-overlay';
-        overlay.className = 'vhs-loading-overlay';
-        overlay.style.zIndex = '9999';
-        overlay.style.background = 'black';
-        overlay.style.position = 'fixed';
-        overlay.style.pointerEvents = 'none';
-        
-        const img = document.createElement('img');
-        img.id = 'tv-glitch-img';
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
-        img.style.opacity = '0.7';
-        img.style.mixBlendMode = 'screen';
-        overlay.appendChild(img);
-        document.body.appendChild(overlay);
-      }
-      
-      document.getElementById('tv-glitch-img').src = imgUrl;
-      overlay.style.opacity = '1';
-      overlay.style.display = 'flex';
-      
-      setTimeout(() => {
-        overlay.style.transition = 'opacity 0.5s ease';
-        overlay.style.opacity = '0';
-        setTimeout(() => { overlay.style.display = 'none'; }, 500);
-      }, 1500);
-    } catch (e) {
-      console.warn('Erro ao carregar Giphy transition:', e);
     }
   }
 
@@ -4735,7 +4531,7 @@ ${baseRules}`;
       <div class="trailer-frame-wrap">
         <div id="yt-player-container"></div>
         <div class="vhs-loading-overlay" id="vhs-loading-overlay">
-          <img src="https://media.giphy.com/media/11v8gJRwB2fE3u/giphy.gif" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; mix-blend-mode: screen;">
+          <div class="chewed-glitch-bars"></div>
           <div class="vhs-tracking-line"></div>
           <div class="vhs-play-indicator">PLAY ▶</div>
           <div class="vhs-time-counter">${displayTime}</div>
@@ -4846,87 +4642,6 @@ ${baseRules}`;
     const overlay = document.getElementById('trailer-overlay');
     overlay.classList.remove('show');
     document.getElementById('trailer-player').innerHTML = '';
-  }
-
-  // ============ OMDB API (Rotten Tomatoes, Metacritic, Awards) ============
-  async function loadOMDbExtras(movieId, title, year) {
-    if (!state.omdbKey) return;
-    try {
-      const yParam = year && year !== '????' ? `&y=${year}` : '';
-      const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}${yParam}&apikey=${state.omdbKey}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data.Response === 'False') return;
-
-      // 1. Injetar Marquee de Prêmios (Awards) se houver
-      if (data.Awards && data.Awards !== 'N/A') {
-        const awardsContainer = document.getElementById(`omdb-awards-${movieId}`);
-        if (awardsContainer) {
-          awardsContainer.innerHTML = `
-            <div class="omdb-awards-marquee">
-              <span>🏆 ${escapeHtml(data.Awards)} 🏆</span>
-            </div>
-          `;
-        }
-      }
-
-      // 2. Injetar badges de notas (Rotten Tomatoes / Metacritic)
-      const ratingsContainer = document.getElementById(`omdb-ratings-${movieId}`);
-      if (ratingsContainer) {
-        let ratingsHtml = '';
-        if (data.Ratings) {
-          const rt = data.Ratings.find(r => r.Source === 'Rotten Tomatoes');
-          if (rt) ratingsHtml += `<span class="omdb-rating-badge rt">${escapeHtml(rt.Value)}</span>`;
-        }
-        if (data.Metascore && data.Metascore !== 'N/A') {
-          ratingsHtml += `<span class="omdb-rating-badge mc">${escapeHtml(data.Metascore)}</span>`;
-        }
-        ratingsContainer.innerHTML = ratingsHtml;
-      }
-    } catch (e) {
-      console.warn('Erro ao carregar OMDb extras:', e);
-    }
-  }
-
-  // ============ RAWG API (Retro Games) ============
-  async function loadRetroGame(movieId, title, releaseYearStr) {
-    if (!state.rawgKey) return;
-    const releaseYear = parseInt(releaseYearStr, 10);
-    // Só procura jogos baseados no filme se o filme for até 2005
-    if (isNaN(releaseYear) || releaseYear > 2005) return;
-
-    try {
-      const res = await fetch(`https://api.rawg.io/api/games?key=${state.rawgKey}&search=${encodeURIComponent(title)}&search_exact=true&page_size=5`);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (!data.results || data.results.length === 0) return;
-
-      // Filtra o jogo que tem um nome bem parecido e foi lançado na mesma época do filme ou pouco depois
-      const game = data.results.find(g => {
-        if (!g.released) return false;
-        const gYear = parseInt(g.released.split('-')[0], 10);
-        return gYear <= 2005 && g.name.toLowerCase().includes(title.toLowerCase());
-      });
-
-      if (game) {
-        const gameContainer = document.getElementById(`rawg-game-${movieId}`);
-        if (gameContainer) {
-          const platStr = game.platforms && game.platforms.length > 0 
-            ? game.platforms[0].platform.name 
-            : 'RETRO CONSOLE';
-            
-          gameContainer.innerHTML = `
-            <div class="rawg-game-sticker" onclick="window.open('https://rawg.io/games/${game.slug}', '_blank')">
-              <div class="rawg-game-header">★ DISPONÍVEL EM CARTUCHO ★</div>
-              ${game.background_image ? `<img src="${game.background_image}" class="rawg-game-cover" alt="Game cover">` : ''}
-              <div class="rawg-game-platform">${escapeHtml(platStr.toUpperCase())}</div>
-            </div>
-          `;
-        }
-      }
-    } catch (e) {
-      console.warn('Erro ao carregar RAWG retro game:', e);
-    }
   }
 
   // ============ DEEZER SOUNDTRACK (via JSONP - sem chave, sem CORS) ============
@@ -5303,7 +5018,6 @@ ${baseRules}`;
         <div class="modal-content">
           <div>
             ${poster}
-            <div id="rawg-game-${movie.id}"></div>
             <div class="modal-actions" style="margin-top:10px; flex-direction:column">
               ${trailer ? `
                 <button class="trailer-btn" onclick="playTrailer('${trailer.key}', ${movie.id})">
@@ -5320,7 +5034,6 @@ ${baseRules}`;
             </div>
           </div>
           <div>
-            <div id="omdb-awards-${movie.id}"></div>
             <div class="modal-title-row">
               ${renderAgeSeal(movie)}
               <div class="modal-title-text">
@@ -5332,7 +5045,6 @@ ${baseRules}`;
               <span>${year}</span>
               ${runtime ? `<span>${runtime}</span>` : ''}
               ${rating ? `<span class="rating">${rating}</span>` : ''}
-              <span id="omdb-ratings-${movie.id}" style="display:inline-flex;"></span>
               ${movie.original_language ? `<span>${movie.original_language.toUpperCase()}</span>` : ''}
             </div>
             ${renderVhsSpecs(movie)}
@@ -5379,10 +5091,8 @@ ${baseRules}`;
             ${renderBarcode(movie)}
           </div>
         </div>`;
-      // Fire async integrations
+      // Fire soundtrack search in background (não bloqueia o modal)
       loadSoundtrack(movie.id, movie.title);
-      loadOMDbExtras(movie.id, movie.title, year);
-      loadRetroGame(movie.id, movie.title, year);
     } catch (err) {
       content.innerHTML = `<button class="modal-close" onclick="closeModal()">×</button><div class="error-msg">⚠ ${escapeHtml(err.message)}</div>`;
     }
