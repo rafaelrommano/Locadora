@@ -1,0 +1,4765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VHS RENTAL ✦ Locadora dos Anos 90</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Bungee&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --neon-pink: #ff2e9a;
+    --neon-cyan: #00f0ff;
+    --neon-yellow: #ffeb00;
+    --neon-purple: #b026ff;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6b00;
+    --crt-bg: #0a0612;
+    --crt-glow: #1a0a2e;
+    --vhs-tape: #1c1c1c;
+    --paper: #f4e8c1;
+  }
+
+  @keyframes scanlines { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
+  @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.97; } 52% { opacity: 1; } }
+  @keyframes vhs-shake { 0%,100%{transform:translate(0)} 10%{transform:translate(-1px,1px)} 30%{transform:translate(1px,-1px)} 50%{transform:translate(-1px,-1px)} 70%{transform:translate(1px,1px)} }
+  @keyframes neon-pulse { 0%,100%{text-shadow:0 0 5px currentColor,0 0 10px currentColor,0 0 20px currentColor} 50%{text-shadow:0 0 8px currentColor,0 0 15px currentColor,0 0 30px currentColor} }
+  @keyframes static-noise { 0%,100%{opacity:0.05} 50%{opacity:0.08} }
+  @keyframes tracking-glitch { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+
+  body {
+    background: var(--crt-bg);
+    color: var(--neon-cyan);
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    animation: flicker 8s infinite;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.25) 50%);
+    background-size: 100% 4px;
+    pointer-events: none; z-index: 9998;
+    animation: scanlines 8s linear infinite;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 2px);
+    pointer-events: none; z-index: 9997;
+    animation: static-noise 0.15s steps(2) infinite;
+  }
+
+  .crt-screen {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: radial-gradient(ellipse at center, transparent 0%, transparent 60%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none; z-index: 9996;
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+
+  header {
+    text-align: center; padding: 30px 20px;
+    border: 3px double var(--neon-pink);
+    background: linear-gradient(135deg, #1a0033 0%, #330033 100%);
+    margin-bottom: 20px; position: relative; overflow: hidden;
+  }
+  header::before {
+    content: '★ ★ ★ NEW RELEASES ★ ★ ★';
+    position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--neon-yellow); letter-spacing: 4px;
+    font-family: 'Press Start 2P', monospace;
+  }
+  .logo {
+    font-family: 'Bungee', cursive;
+    font-size: clamp(36px, 7vw, 72px);
+    color: var(--neon-pink); letter-spacing: 4px; margin: 15px 0 5px;
+    animation: neon-pulse 2s ease-in-out infinite; transform: skewX(-5deg);
+  }
+  .logo .vhs { color: var(--neon-cyan); }
+  .tagline {
+    font-family: 'Press Start 2P', monospace; font-size: 12px;
+    color: var(--neon-yellow); margin-bottom: 10px; letter-spacing: 2px;
+  }
+  .marquee {
+    background: var(--neon-yellow); color: black;
+    font-family: 'Press Start 2P', monospace; font-size: 11px;
+    padding: 8px 0; overflow: hidden; white-space: nowrap;
+    border-top: 2px solid black; border-bottom: 2px solid black;
+  }
+  .marquee span { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; }
+
+  .api-setup {
+    background: var(--crt-glow); border: 2px solid var(--neon-yellow);
+    padding: 20px; margin-bottom: 20px; text-align: center;
+  }
+  .api-setup h2 { font-family: 'Press Start 2P', monospace; font-size: 14px; color: var(--neon-yellow); margin-bottom: 15px; }
+  .api-setup p { color: #ddd; margin-bottom: 15px; font-size: 18px; line-height: 1.4; }
+  .api-setup a { color: var(--neon-cyan); text-decoration: underline; }
+  .api-input-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  input[type="text"], input[type="search"], input[type="number"], select {
+    background: black; color: var(--neon-green);
+    border: 2px solid var(--neon-cyan);
+    padding: 10px 15px; font-family: 'VT323', monospace; font-size: 18px;
+    min-width: 200px;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+
+  button {
+    background: var(--neon-pink); color: black; border: 2px solid black;
+    padding: 10px 20px; font-family: 'Press Start 2P', monospace;
+    font-size: 11px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+    transition: all 0.1s; box-shadow: 4px 4px 0 var(--neon-cyan);
+  }
+  button:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--neon-cyan); }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--neon-cyan); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.secondary { background: var(--neon-cyan); box-shadow: 4px 4px 0 var(--neon-pink); }
+  button.secondary:hover { box-shadow: 6px 6px 0 var(--neon-pink); }
+  button.tiny { padding: 4px 8px; font-size: 9px; box-shadow: 2px 2px 0 var(--neon-yellow); }
+
+  nav {
+    background: black; border: 2px solid var(--neon-cyan);
+    padding: 15px; margin-bottom: 20px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tab-btn {
+    background: transparent; color: var(--neon-cyan);
+    border: 2px solid var(--neon-cyan); box-shadow: 3px 3px 0 var(--neon-purple);
+    font-size: 10px; padding: 8px 12px;
+  }
+  .tab-btn.active { background: var(--neon-cyan); color: black; }
+  .nav-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .nav-controls select { min-width: auto; padding: 6px 10px; font-size: 16px; }
+
+  /* FILTER PANEL */
+  .filter-panel {
+    background: linear-gradient(135deg, #1a0033 0%, #0a0612 100%);
+    border: 3px solid var(--neon-yellow);
+    padding: 20px; margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(255,235,0,0.3);
+  }
+  .filter-panel h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px; color: var(--neon-yellow);
+    margin-bottom: 15px; letter-spacing: 2px;
+  }
+  .filter-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px; align-items: start;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 700px) { .filter-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  .filter-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px; color: var(--neon-cyan);
+    padding-top: 12px;
+    letter-spacing: 1px;
+  }
+  .filter-input { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .filter-input input, .filter-input select { flex: 1; min-width: 120px; }
+
+  /* Chips (selected items) */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px; padding: 6px; background: rgba(0,0,0,0.4); border: 1px dashed var(--neon-cyan); flex: 1; align-items: center; }
+  .chip {
+    background: var(--neon-pink); color: black;
+    padding: 4px 8px 4px 10px;
+    font-family: 'VT323', monospace; font-size: 16px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid black;
+  }
+  .chip.genre-chip { background: var(--neon-purple); color: white; }
+  .chip.kw-chip { background: var(--neon-orange); color: black; }
+  .chip.person-chip { background: var(--neon-cyan); color: black; }
+  .chip .x { cursor: pointer; font-weight: bold; padding: 0 4px; }
+  .chip .x:hover { color: white; }
+
+  /* Keyword search box with results dropdown */
+  .kw-box { position: relative; flex: 1; min-width: 200px; }
+  .kw-box input { width: 100%; }
+  .kw-results {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: black; border: 2px solid var(--neon-cyan);
+    max-height: 200px; overflow-y: auto;
+    z-index: 100; display: none;
+  }
+  .kw-results.show { display: block; }
+  .kw-item {
+    padding: 8px 12px; cursor: pointer; color: var(--neon-green);
+    border-bottom: 1px solid #222; font-size: 16px;
+  }
+  .kw-item:hover { background: var(--crt-glow); color: var(--neon-yellow); }
+
+  .genre-checks {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 4px; padding: 6px; background: rgba(0,0,0,0.4); border: 1px dashed var(--neon-cyan); flex: 1;
+  }
+  .genre-check {
+    display: flex; align-items: center; gap: 4px;
+    cursor: pointer; padding: 3px 6px; font-size: 14px;
+    color: var(--neon-cyan); border: 1px solid transparent;
+  }
+  .genre-check:hover { border-color: var(--neon-pink); }
+  .genre-check input { accent-color: var(--neon-pink); cursor: pointer; }
+  .genre-check.active { background: var(--neon-purple); color: white; border-color: white; }
+
+  .filter-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; justify-content: center; }
+
+  .preset-row {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+    padding: 10px; background: rgba(0,0,0,0.3);
+    border-left: 4px solid var(--neon-orange);
+  }
+  .preset-row strong { color: var(--neon-orange); font-family: 'Press Start 2P', monospace; font-size: 10px; padding: 4px 0; }
+  .preset-btn {
+    background: var(--crt-glow); color: var(--neon-yellow);
+    border: 1px solid var(--neon-yellow);
+    padding: 5px 10px; font-family: 'VT323', monospace; font-size: 15px;
+    cursor: pointer; box-shadow: 2px 2px 0 var(--neon-purple);
+    text-transform: none; letter-spacing: 0;
+  }
+  .preset-btn:hover { background: var(--neon-yellow); color: black; }
+
+  .search-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .search-bar input { flex: 1; min-width: 250px; }
+
+  .section-title {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--neon-yellow); font-size: 16px;
+    margin: 25px 0 15px; padding: 12px;
+    background: linear-gradient(90deg, var(--crt-glow) 0%, transparent 100%);
+    border-left: 6px solid var(--neon-pink);
+    text-transform: uppercase; letter-spacing: 2px;
+    animation: tracking-glitch 6s infinite;
+  }
+  .section-title::before { content: '▶ '; color: var(--neon-pink); }
+
+  /* ============ SHELF (grid layout - cards) ============ */
+  .shelf {
+    background: repeating-linear-gradient(90deg, #2a1810 0px, #2a1810 50px, #1a0c08 50px, #1a0c08 52px);
+    padding: 30px 20px 50px;
+    border-top: 8px solid #4a2c1a;
+    border-bottom: 12px solid #2a1810;
+    border-radius: 4px;
+    position: relative;
+    margin-bottom: 30px;
+    box-shadow: inset 0 -20px 30px rgba(0,0,0,0.5);
+  }
+  .vhs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 18px;
+  }
+
+  .vhs-tape {
+    background: var(--vhs-tape);
+    border: 2px solid #444;
+    border-radius: 4px;
+    padding: 6px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    aspect-ratio: 2/3;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+      inset 2px 2px 4px rgba(255,255,255,0.1),
+      inset -2px -2px 4px rgba(0,0,0,0.5),
+      3px 3px 0 rgba(0,0,0,0.6);
+  }
+  .vhs-tape::before {
+    content: '';
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 8px; height: 8px;
+    background: var(--neon-orange);
+    border-radius: 50%;
+    box-shadow: 0 0 4px var(--neon-orange);
+    z-index: 2;
+  }
+  .vhs-tape:hover {
+    transform: translateY(-6px) rotate(-1deg);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 15px var(--neon-pink), 3px 8px 0 rgba(0,0,0,0.6);
+    animation: vhs-shake 0.2s;
+  }
+  .vhs-tape .label {
+    background: var(--paper);
+    color: #1a0a2e;
+    padding: 5px 6px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #c4a878;
+    overflow: hidden;
+    position: relative;
+  }
+  .vhs-tape .label::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 14px;
+    background: repeating-linear-gradient(90deg,
+      var(--neon-pink) 0px, var(--neon-pink) 4px,
+      var(--neon-yellow) 4px, var(--neon-yellow) 8px,
+      var(--neon-cyan) 8px, var(--neon-cyan) 12px);
+  }
+  .vhs-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    image-rendering: pixelated;
+    filter: contrast(1.1) saturate(1.15);
+  }
+  .vhs-no-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    text-align: center;
+    padding: 10px;
+  }
+  .vhs-title {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1a0a2e;
+    line-height: 1.1;
+    margin-bottom: 2px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .vhs-year {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    color: #8a6a3a;
+    margin-top: auto;
+  }
+  .vhs-fav-badge {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    color: var(--neon-yellow);
+    font-size: 14px;
+    z-index: 2;
+    text-shadow: 0 0 4px black;
+  }
+
+  .loading {
+    text-align: center; padding: 40px;
+    color: var(--neon-green); font-size: 24px;
+    animation: flicker 0.3s infinite;
+  }
+  .loading::before { content: '◉ '; animation: neon-pulse 1s infinite; }
+
+  .error-msg {
+    background: #4a0000; border: 2px solid var(--neon-pink);
+    color: var(--neon-pink); padding: 15px; margin: 20px 0;
+    text-align: center; font-family: 'Press Start 2P', monospace;
+    font-size: 11px; line-height: 1.6;
+  }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--neon-cyan); }
+  .empty-state .big {
+    font-family: 'Press Start 2P', monospace; font-size: 20px;
+    color: var(--neon-pink); margin-bottom: 15px; animation: neon-pulse 2s infinite;
+  }
+  .results-count {
+    text-align: center; color: var(--neon-yellow);
+    font-family: 'Press Start 2P', monospace; font-size: 11px;
+    padding: 10px; margin-bottom: 10px;
+    border-top: 1px dashed var(--neon-yellow);
+    border-bottom: 1px dashed var(--neon-yellow);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(2px);
+    z-index: 9999; display: none;
+    justify-content: center; align-items: center; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; animation: flicker 0.4s; }
+  .modal {
+    background: var(--crt-bg); border: 3px solid var(--neon-pink);
+    max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto;
+    padding: 25px; position: relative;
+    box-shadow: 0 0 50px var(--neon-pink);
+  }
+  .modal-close {
+    position: absolute; top: 15px; right: 15px;
+    background: var(--neon-pink); color: black; border: none;
+    width: 36px; height: 36px; cursor: pointer;
+    font-family: 'Press Start 2P', monospace; font-size: 14px; z-index: 2;
+  }
+  .modal-content { display: grid; grid-template-columns: 250px 1fr; gap: 25px; }
+  @media (max-width: 600px) { .modal-content { grid-template-columns: 1fr; } }
+  .modal-poster { width: 100%; border: 2px solid var(--neon-cyan); image-rendering: pixelated; }
+  .modal-title {
+    font-family: 'Press Start 2P', monospace; font-size: 18px;
+    color: var(--neon-yellow); margin-bottom: 10px;
+    line-height: 1.3; word-break: break-word;
+  }
+  .modal-original-title {
+    font-family: 'VT323', monospace; font-size: 18px;
+    color: var(--neon-cyan); font-style: italic; margin-bottom: 15px;
+  }
+  .modal-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; }
+  .modal-meta span {
+    background: var(--crt-glow); border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan); padding: 4px 10px; font-size: 14px;
+    font-family: 'VT323', monospace;
+  }
+  .modal-meta .rating { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+  .modal-genres { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+  .genre-tag {
+    background: var(--neon-purple); color: white;
+    padding: 4px 10px; font-size: 12px; font-family: 'Press Start 2P', monospace;
+    cursor: pointer;
+  }
+  .genre-tag:hover { background: var(--neon-pink); }
+  .modal-keywords { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+  .kw-tag {
+    background: var(--neon-orange); color: black;
+    padding: 3px 8px; font-size: 14px; font-family: 'VT323', monospace;
+    cursor: pointer; border: 1px solid black;
+  }
+  .kw-tag:hover { background: var(--neon-yellow); }
+  .modal-overview {
+    color: #ddd; line-height: 1.5; font-size: 18px;
+    margin-bottom: 20px; border-left: 4px solid var(--neon-cyan); padding-left: 15px;
+  }
+  .cast-section { margin-top: 20px; }
+  .cast-section h3 {
+    font-family: 'Press Start 2P', monospace; font-size: 12px;
+    color: var(--neon-pink); margin-bottom: 10px;
+  }
+  .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+  .cast-member {
+    background: var(--crt-glow); padding: 8px; text-align: center;
+    border: 1px solid var(--neon-cyan); cursor: pointer; transition: all 0.15s;
+  }
+  .cast-member:hover { border-color: var(--neon-pink); transform: scale(1.05); }
+  .cast-member img { width: 100%; aspect-ratio: 2/3; object-fit: cover; margin-bottom: 5px; }
+  .cast-member .name { font-size: 13px; color: var(--neon-yellow); line-height: 1.1; }
+  .cast-member .character { font-size: 12px; color: #999; line-height: 1.1; margin-top: 3px; }
+
+  /* WATCH PROVIDERS (JustWatch via TMDB) */
+  .watch-section {
+    background: linear-gradient(135deg, rgba(57,255,20,0.08) 0%, rgba(0,240,255,0.05) 100%);
+    border: 2px solid var(--neon-green);
+    padding: 14px 16px;
+    margin: 16px 0 18px;
+    box-shadow: 0 0 12px rgba(57,255,20,0.2);
+  }
+  .watch-section h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--neon-green);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 4px rgba(57,255,20,0.5);
+  }
+  .watch-country {
+    color: var(--neon-yellow);
+    font-size: 10px;
+    margin-left: 6px;
+  }
+  .watch-empty {
+    color: #ccc;
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    padding: 6px 0;
+    line-height: 1.4;
+  }
+  .watch-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+  }
+  .watch-row:last-of-type { border-bottom: none; }
+  .watch-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 5px 7px;
+    border: 1px solid;
+    background: rgba(0,0,0,0.4);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .watch-providers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+  }
+  .watch-provider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    padding: 4px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    width: 64px;
+  }
+  .watch-provider:hover {
+    border-color: var(--neon-pink);
+    background: rgba(255,46,154,0.1);
+    transform: translateY(-2px);
+  }
+  .watch-provider img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    object-fit: cover;
+    image-rendering: auto;
+  }
+  .watch-provider-fallback {
+    width: 48px; height: 48px;
+    background: var(--neon-purple);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    text-align: center;
+    padding: 4px;
+    font-family: 'VT323', monospace;
+    line-height: 1.05;
+  }
+  .watch-provider-name {
+    font-family: 'VT323', monospace;
+    font-size: 12px;
+    color: var(--neon-cyan);
+    margin-top: 4px;
+    text-align: center;
+    line-height: 1.05;
+    word-break: break-word;
+    max-width: 64px;
+  }
+  .watch-more {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--neon-cyan);
+    font-family: 'VT323', monospace;
+    font-size: 15px;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--neon-cyan);
+    padding-bottom: 1px;
+  }
+  .watch-more:hover { color: var(--neon-pink); border-color: var(--neon-pink); }
+  .watch-justwatch-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--neon-yellow);
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--neon-yellow);
+  }
+  .watch-justwatch-link:hover { color: var(--neon-pink); border-color: var(--neon-pink); }
+  .watch-attribution {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #777;
+    font-style: italic;
+    text-align: right;
+    font-family: 'VT323', monospace;
+  }
+  @media (max-width: 600px) {
+    .watch-row { flex-direction: column; gap: 6px; }
+    .watch-label { min-width: auto; align-self: flex-start; }
+  }
+
+  /* RELATED MOVIES */
+  .recs-section { margin-top: 25px; }
+  .recs-section h3 {
+    font-family: 'Press Start 2P', monospace; font-size: 12px;
+    color: var(--neon-yellow); margin-bottom: 12px;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, rgba(255,235,0,0.15) 0%, transparent 100%);
+    border-left: 4px solid var(--neon-yellow);
+  }
+  .recs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  .rec-card {
+    background: var(--crt-glow);
+    border: 2px solid var(--neon-cyan);
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+  }
+  .rec-card:hover {
+    border-color: var(--neon-pink);
+    transform: translateY(-3px) rotate(-1deg);
+    box-shadow: 0 4px 12px var(--neon-pink);
+  }
+  .rec-card img {
+    width: 100%; aspect-ratio: 2/3; object-fit: cover;
+    image-rendering: pixelated;
+  }
+  .rec-no-poster {
+    width: 100%; aspect-ratio: 2/3;
+    background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-family: 'Press Start 2P', monospace;
+    font-size: 8px; text-align: center;
+  }
+  .rec-title {
+    font-family: 'VT323', monospace; font-size: 14px;
+    color: var(--neon-yellow); line-height: 1.05;
+    padding: 4px 2px 0; margin-bottom: 2px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .rec-year {
+    font-family: 'VT323', monospace; font-size: 12px;
+    color: var(--neon-cyan); padding: 0 2px 2px;
+    margin-top: auto;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+  /* TRAILER */
+  .trailer-btn {
+    background: var(--neon-cyan) !important;
+    color: black !important;
+    box-shadow: 4px 4px 0 var(--neon-orange) !important;
+    font-size: 12px !important;
+    position: relative;
+    animation: trailer-glow 2.5s ease-in-out infinite;
+  }
+  .trailer-btn:hover { box-shadow: 6px 6px 0 var(--neon-orange) !important; }
+  .trailer-btn:disabled { animation: none; }
+
+  @keyframes trailer-glow {
+    0%, 100% { box-shadow: 4px 4px 0 var(--neon-orange), 0 0 0 rgba(0,240,255,0); }
+    50% { box-shadow: 4px 4px 0 var(--neon-orange), 0 0 15px rgba(0,240,255,0.6); }
+  }
+
+  .trailer-overlay {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.95); backdrop-filter: blur(4px);
+    z-index: 10000; display: none;
+    justify-content: center; align-items: center;
+    padding: 20px;
+  }
+  .trailer-overlay.show { display: flex; animation: flicker 0.4s; }
+
+  .trailer-modal {
+    background: black;
+    border: 3px solid var(--neon-cyan);
+    box-shadow: 0 0 50px var(--neon-cyan), inset 0 0 30px rgba(0,240,255,0.1);
+    max-width: 1100px;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+  }
+
+  .trailer-close {
+    position: absolute;
+    top: -3px; right: -3px;
+    background: var(--neon-pink);
+    color: black;
+    border: 3px solid var(--neon-cyan);
+    width: 44px; height: 44px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    z-index: 2;
+    transition: all 0.1s;
+  }
+  .trailer-close:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px var(--neon-pink);
+  }
+
+  .trailer-title {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--neon-yellow);
+    font-size: 12px;
+    text-align: center;
+    padding: 8px 50px 14px;
+    letter-spacing: 1px;
+    word-break: break-word;
+    animation: tracking-glitch 6s infinite;
+  }
+
+  .trailer-frame-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: black;
+    border: 2px solid #333;
+    overflow: hidden;
+  }
+  .trailer-frame-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .trailer-frame-wrap iframe {
+    width: 100%; height: 100%;
+    border: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ REWIND PROMPT (easter egg) ============ */
+  @keyframes rewind-marquee-blink {
+    0%, 60% { color: var(--neon-yellow); text-shadow: 0 0 6px var(--neon-yellow); }
+    61%, 100% { color: var(--neon-pink); text-shadow: 0 0 8px var(--neon-pink); }
+  }
+  @keyframes reel-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes reel-spin-fast {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-1440deg); }
+  }
+  .rewind-prompt {
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--neon-cyan);
+    font-family: 'VT323', monospace;
+  }
+  .rewind-marquee {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    padding: 10px 14px;
+    background: black;
+    border: 2px solid var(--neon-yellow);
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    animation: rewind-marquee-blink 0.6s infinite;
+  }
+  .rewind-cassette {
+    width: 240px;
+    height: 150px;
+    background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid #444;
+    border-radius: 8px;
+    margin: 0 auto 24px;
+    padding: 18px;
+    position: relative;
+    box-shadow: inset 2px 2px 4px rgba(255,255,255,0.08), inset -2px -2px 6px rgba(0,0,0,0.6), 0 6px 12px rgba(0,0,0,0.5);
+  }
+  .cassette-reels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+  }
+  .reel {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, #4a3a2a 0%, #2a1a10 35%, #1a0a05 36%, #1a0a05 100%);
+    position: relative;
+    animation: reel-spin 4s linear infinite;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+  }
+  .reel::before,
+  .reel::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 4px; height: 50%;
+    background: #8a6a3a;
+    transform-origin: top center;
+    transform: translate(-50%, 0);
+  }
+  .reel::before { transform: translate(-50%, 0) rotate(0deg); }
+  .reel::after { transform: translate(-50%, 0) rotate(60deg); }
+  .reel-right { animation: reel-spin 4s linear infinite reverse; }
+  .rewind-prompt.rewinding .reel { animation: reel-spin-fast 1.5s linear forwards; }
+  .rewind-prompt.rewinding .reel-right { animation: reel-spin-fast 1.5s linear forwards reverse; }
+  .cassette-label {
+    position: absolute;
+    bottom: 12px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    color: #1a0a2e;
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    padding: 2px 12px;
+    border: 1px solid #c4a878;
+    letter-spacing: 1px;
+  }
+  .rewind-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .rewind-btn {
+    background: var(--neon-cyan) !important;
+    color: black !important;
+    box-shadow: 4px 4px 0 var(--neon-orange) !important;
+    font-size: 14px !important;
+    padding: 12px 22px !important;
+    animation: neon-pulse 1.5s infinite;
+  }
+  .rewind-skip {
+    background: transparent !important;
+    color: #888 !important;
+    border: 1px dashed #555 !important;
+    box-shadow: none !important;
+    font-size: 9px !important;
+    padding: 8px 14px !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-family: 'VT323', monospace !important;
+  }
+  .rewind-skip:hover { color: var(--neon-pink) !important; border-color: var(--neon-pink) !important; box-shadow: none !important; transform: none; }
+  .rewind-fineprint {
+    font-size: 14px;
+    color: #777;
+    font-style: italic;
+  }
+
+  /* ============ CHEWED TAPE (easter egg) ============ */
+  @keyframes chewed-glitch-bars {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+  @keyframes chewed-shake {
+    0%, 100% { transform: translate(0); }
+    10% { transform: translate(-4px, 2px); }
+    25% { transform: translate(3px, -1px); filter: hue-rotate(45deg); }
+    50% { transform: translate(-2px, -3px); }
+    75% { transform: translate(2px, 1px); filter: hue-rotate(-30deg); }
+  }
+  @keyframes chewed-cleaning {
+    0%, 100% { filter: brightness(1); }
+    20% { filter: brightness(0) blur(20px); }
+    40% { filter: brightness(3) saturate(0); }
+    60% { filter: brightness(0) contrast(2); }
+    80% { filter: brightness(1.5); }
+  }
+  .modal-overlay.cleaning .modal {
+    animation: chewed-cleaning 0.7s steps(8);
+  }
+
+  .chewed-tape {
+    position: relative;
+    padding: 30px;
+    text-align: center;
+    background: #000;
+    overflow: hidden;
+    animation: chewed-shake 0.15s infinite;
+    min-height: 380px;
+  }
+  .chewed-glitch-bars {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(0deg,
+        rgba(255,46,154,0.15) 0px, rgba(255,46,154,0.15) 6px,
+        rgba(0,240,255,0.15) 6px, rgba(0,240,255,0.15) 12px,
+        rgba(255,235,0,0.1) 12px, rgba(255,235,0,0.1) 22px,
+        transparent 22px, transparent 40px);
+    background-size: 100% 80px;
+    animation: chewed-glitch-bars 0.8s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .chewed-tape::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg,
+      transparent 0px, transparent 2px,
+      rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 3px);
+    pointer-events: none;
+  }
+  .chewed-content {
+    position: relative;
+    z-index: 2;
+    color: var(--neon-pink);
+    font-family: 'VT323', monospace;
+  }
+  .chewed-icon {
+    font-size: 60px;
+    margin-bottom: 16px;
+    animation: chewed-shake 0.1s infinite;
+  }
+  .chewed-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    color: var(--neon-yellow);
+    text-shadow: 2px 2px 0 var(--neon-pink), -2px -2px 0 var(--neon-cyan);
+    margin-bottom: 18px;
+    letter-spacing: 3px;
+  }
+  .chewed-msg {
+    font-size: 20px;
+    line-height: 1.4;
+    color: white;
+    margin-bottom: 18px;
+  }
+  .chewed-tracking {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--neon-cyan);
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+    animation: flicker 0.3s infinite;
+  }
+  .chewed-fix-btn {
+    background: var(--neon-green) !important;
+    color: black !important;
+    font-size: 13px !important;
+    padding: 14px 24px !important;
+    box-shadow: 4px 4px 0 var(--neon-cyan) !important;
+    animation: neon-pulse 1.2s infinite;
+  }
+  .vhs-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: black;
+    border: 2px solid var(--neon-yellow);
+    color: var(--neon-yellow);
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    padding: 12px 18px;
+    z-index: 10500;
+    box-shadow: 4px 4px 0 var(--neon-pink);
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    max-width: 320px;
+  }
+  .vhs-toast.show { opacity: 1; transform: translateX(0); }
+  .vhs-toast.win { border-color: var(--neon-green); color: var(--neon-green); box-shadow: 4px 4px 0 var(--neon-cyan); }
+  .vhs-toast.fine { border-color: var(--neon-pink); color: var(--neon-pink); box-shadow: 4px 4px 0 var(--neon-orange); }
+  @media (max-width: 600px) {
+    .vhs-toast { right: 15px; left: 15px; bottom: 15px; font-size: 16px; }
+  }
+
+  .pagination {
+    display: flex; justify-content: center; align-items: center;
+    gap: 12px; margin: 25px 0;
+  }
+  .page-info { font-family: 'Press Start 2P', monospace; font-size: 12px; color: var(--neon-yellow); }
+
+  .person-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+  .person-card {
+    background: var(--crt-glow); border: 2px solid var(--neon-cyan);
+    padding: 8px; text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .person-card:hover {
+    border-color: var(--neon-pink); transform: translateY(-4px);
+    box-shadow: 0 5px 15px var(--neon-pink);
+  }
+  .person-card img {
+    width: 100%; aspect-ratio: 2/3; object-fit: cover;
+    margin-bottom: 8px; image-rendering: pixelated;
+  }
+  .person-card .name { font-family: 'VT323', monospace; font-size: 18px; color: var(--neon-yellow); line-height: 1.1; }
+  .person-card .known { font-size: 12px; color: var(--neon-cyan); margin-top: 4px; }
+
+  .breadcrumb {
+    background: var(--crt-glow); padding: 10px 15px; margin-bottom: 15px;
+    border-left: 4px solid var(--neon-yellow);
+    color: var(--neon-cyan); font-size: 18px;
+  }
+  .breadcrumb .back-btn {
+    background: transparent; color: var(--neon-pink);
+    border: 1px solid var(--neon-pink); padding: 4px 10px;
+    font-size: 10px; margin-right: 10px; box-shadow: 2px 2px 0 var(--neon-yellow);
+  }
+
+  .corner-sticker {
+    position: fixed; z-index: 100;
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    padding: 6px 10px; transform: rotate(-8deg); pointer-events: none;
+  }
+  .corner-sticker.tl { top: 10px; left: 10px; background: var(--neon-yellow); color: black; border: 2px solid black; }
+  .corner-sticker.br { bottom: 10px; right: 10px; background: var(--neon-pink); color: white; border: 2px solid white; transform: rotate(5deg); }
+  @media (max-width: 600px) { .corner-sticker { display: none; } }
+
+  /* ============ LOYALTY BADGE in nav ============ */
+  .loyalty-badge {
+    background: rgba(0,0,0,0.5);
+    border: 2px solid #888;
+    color: #888;
+    padding: 5px 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 1px;
+  }
+  .loyalty-badge:hover { transform: scale(1.05); }
+
+  /* ============ LOYALTY CARD VIEW ============ */
+  @keyframes card-shimmer {
+    0%, 100% { transform: translateX(-100%) rotate(15deg); }
+    50% { transform: translateX(100%) rotate(15deg); }
+  }
+  @keyframes card-glow-gold {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.4), 8px 8px 0 rgba(0,0,0,0.6); }
+    50% { box-shadow: 0 0 35px rgba(255,215,0,0.7), 0 0 50px rgba(255,215,0,0.3), 8px 8px 0 rgba(0,0,0,0.6); }
+  }
+
+  .loyalty-card-container {
+    display: flex; justify-content: center;
+    padding: 20px 0 30px;
+  }
+  .loyalty-card {
+    width: 380px;
+    max-width: 100%;
+    aspect-ratio: 1.586;
+    background: linear-gradient(135deg, #0a0612 0%, #1a0a2e 50%, #0a0612 100%);
+    border: 3px solid var(--card-color);
+    border-radius: 14px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 18px rgba(0,0,0,0.6), 8px 8px 0 rgba(0,0,0,0.6);
+    transition: transform 0.3s;
+  }
+  .loyalty-card:hover { transform: translateY(-4px) rotate(-1deg); }
+  .loyalty-card[data-level="gold"] { animation: card-glow-gold 3s ease-in-out infinite; }
+  .loyalty-card[data-level="director"] { box-shadow: 0 0 25px rgba(255,46,154,0.5), 8px 8px 0 rgba(0,0,0,0.6); }
+  .loyalty-card[data-level="vip"] {
+    background: linear-gradient(135deg, #200040 0%, #400060 50%, #200040 100%);
+    box-shadow: 0 0 35px rgba(176,38,255,0.6), 8px 8px 0 rgba(0,0,0,0.6);
+  }
+  .loyalty-card-shine {
+    position: absolute;
+    top: -50%; left: 0;
+    width: 50%; height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    animation: card-shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .loyalty-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .loyalty-card-logo {
+    font-family: 'Bungee', cursive;
+    font-size: 22px;
+    color: var(--card-color);
+    letter-spacing: 2px;
+    transform: skewX(-5deg);
+    text-shadow: 0 0 6px var(--card-color);
+  }
+  .loyalty-card-logo .logo-vhs { color: var(--neon-cyan); }
+  .loyalty-card-chip {
+    width: 32px; height: 24px;
+    background: linear-gradient(135deg, #d4af37 0%, #b8941e 50%, #8b6914 100%);
+    border-radius: 4px;
+    position: relative;
+    box-shadow: inset 1px 1px 2px rgba(255,255,255,0.4), inset -1px -1px 2px rgba(0,0,0,0.5);
+  }
+  .loyalty-card-chip::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; height: 1px;
+    background: rgba(0,0,0,0.3);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.3), 0 12px 0 rgba(0,0,0,0.3);
+  }
+  .loyalty-card-chip::after {
+    content: '';
+    position: absolute;
+    top: 4px; bottom: 4px; left: 50%; width: 1px;
+    background: rgba(0,0,0,0.3);
+  }
+  .loyalty-card-rank {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--card-color);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 8px var(--card-color);
+  }
+  .loyalty-card-sub {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: #aaa;
+    font-style: italic;
+    margin-bottom: auto;
+  }
+  .loyalty-card-id {
+    display: flex; gap: 24px; margin-top: 16px;
+  }
+  .loyalty-card-field { display: flex; flex-direction: column; }
+  .field-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px; color: #888;
+    margin-bottom: 4px; letter-spacing: 1.5px;
+  }
+  .field-value {
+    font-family: 'VT323', monospace;
+    font-size: 18px; color: white;
+    letter-spacing: 2px;
+  }
+  .loyalty-card-stripe {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 6px;
+    background: repeating-linear-gradient(90deg,
+      var(--neon-pink) 0px, var(--neon-pink) 8px,
+      var(--neon-yellow) 8px, var(--neon-yellow) 16px,
+      var(--neon-cyan) 16px, var(--neon-cyan) 24px);
+  }
+
+  .loyalty-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 0 auto 24px;
+    max-width: 600px;
+  }
+  .loyalty-stat {
+    background: rgba(0,0,0,0.4);
+    border: 2px solid #333;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 6px currentColor;
+  }
+  .stat-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #888;
+    letter-spacing: 2px;
+  }
+  .progress-section {
+    background: rgba(0,0,0,0.4);
+    border-left: 4px solid var(--neon-yellow);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--neon-cyan);
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .progress-bar {
+    height: 14px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #444;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    transition: width 0.6s ease-out;
+    background-image: repeating-linear-gradient(45deg,
+      rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 4px,
+      transparent 4px, transparent 8px);
+  }
+  .levels-list, .how-to-earn {
+    background: rgba(0,0,0,0.3);
+    border: 1px dashed #555;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .levels-list h3, .how-to-earn h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--neon-yellow);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .level-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    grid-template-areas:
+      "icon name pts"
+      "icon sub sub";
+    gap: 2px 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+    opacity: 0.55;
+    transition: opacity 0.3s;
+  }
+  .level-row:last-child { border-bottom: none; }
+  .level-row.achieved { opacity: 1; }
+  .level-row.current {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid var(--row-color);
+    padding-left: 8px;
+    margin-left: -8px;
+  }
+  .level-row-icon {
+    grid-area: icon;
+    color: var(--row-color);
+    font-size: 18px;
+    align-self: start;
+  }
+  .level-row-name {
+    grid-area: name;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--row-color);
+    letter-spacing: 1px;
+  }
+  .level-row-threshold {
+    grid-area: pts;
+    font-family: 'VT323', monospace;
+    font-size: 15px;
+    color: #aaa;
+  }
+  .level-row-sub {
+    grid-area: sub;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: #999;
+    font-style: italic;
+  }
+  .earn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+  }
+  .earn-item {
+    background: rgba(0,0,0,0.4);
+    padding: 8px 12px;
+    color: var(--neon-cyan);
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid var(--neon-green);
+  }
+  .earn-item.fine-item {
+    border-left-color: var(--neon-pink);
+    color: #ccc;
+  }
+  .earn-pts {
+    background: var(--neon-green);
+    color: black;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 4px 8px;
+    min-width: 50px;
+    text-align: center;
+  }
+  .fine-item .earn-pts {
+    background: var(--neon-pink);
+    color: white;
+  }
+
+  /* ============ LEVEL UP CELEBRATION ============ */
+  @keyframes levelup-pop {
+    0% { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+    50% { transform: scale(1.1) rotate(5deg); }
+    70% { transform: scale(0.95) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  @keyframes star-rain {
+    0% { transform: translateY(-20px); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .level-up-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.95) 100%);
+    z-index: 11000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .level-up-overlay.show { opacity: 1; }
+  .level-up-card {
+    background: linear-gradient(135deg, #0a0612 0%, #1a0a2e 100%);
+    border: 4px solid var(--level-color);
+    padding: 36px 40px;
+    text-align: center;
+    box-shadow: 0 0 60px var(--level-color), inset 0 0 30px rgba(0,0,0,0.5);
+    animation: levelup-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 480px;
+  }
+  .level-up-stars {
+    font-size: 22px;
+    letter-spacing: 6px;
+    color: var(--level-color);
+    margin-bottom: 16px;
+    animation: star-rain 1.5s ease-out;
+    text-shadow: 0 0 12px var(--level-color);
+  }
+  .level-up-rank {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--neon-yellow);
+    margin-bottom: 18px;
+    letter-spacing: 3px;
+    animation: neon-pulse 1s infinite;
+  }
+  .level-up-title {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: white;
+    margin-bottom: 8px;
+  }
+  .level-up-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px var(--level-color);
+  }
+  .level-up-sub {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: #ccc;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+  .level-up-card button {
+    background: var(--level-color) !important;
+    color: black !important;
+    font-size: 12px !important;
+    padding: 12px 24px !important;
+  }
+
+  /* ============ GOLD STICKER (Cliente Ouro perk) ============ */
+  .gold-sticker {
+    display: none;
+    position: fixed;
+    top: 100px;
+    right: 15px;
+    background: #ffd700;
+    color: #5a3a00;
+    border: 3px solid #8b6914;
+    padding: 10px 14px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    transform: rotate(8deg);
+    z-index: 100;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
+    line-height: 1.4;
+    text-align: center;
+    letter-spacing: 1px;
+    pointer-events: none;
+    animation: neon-pulse 3s ease-in-out infinite;
+  }
+  body[data-level="gold"] .gold-sticker,
+  body[data-level="director"] .gold-sticker,
+  body[data-level="vip"] .gold-sticker { display: block; }
+  @media (max-width: 600px) { .gold-sticker { display: none !important; } }
+
+  /* Subtle gold glow on header for high levels */
+  body[data-level="gold"] header,
+  body[data-level="director"] header,
+  body[data-level="vip"] header {
+    box-shadow: 0 0 30px rgba(255,215,0,0.2);
+  }
+
+  /* ============ VHS BACK COVER MODAL STYLING ============ */
+
+  /* Title row with the age seal floating to the left */
+  .modal-title-row {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .modal-title-text { flex: 1; min-width: 0; }
+  .age-seal-wrap {
+    flex-shrink: 0;
+  }
+
+  /* Age classification seal — round neon disc like the old INC/MJ seals */
+  .age-seal {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 4px solid currentColor;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    font-weight: bold;
+    background: rgba(0,0,0,0.55);
+    box-shadow:
+      3px 3px 0 rgba(0,0,0,0.7),
+      inset 0 0 8px rgba(0,0,0,0.4),
+      0 0 12px currentColor;
+    text-align: center;
+    line-height: 1;
+    cursor: help;
+  }
+  .age-seal-num {
+    font-size: 18px;
+    margin-bottom: 2px;
+    text-shadow: 0 0 6px currentColor;
+  }
+  .age-seal-sub {
+    font-size: 6px;
+    letter-spacing: 1px;
+    opacity: 0.85;
+  }
+  .age-seal-L  { color: #00cc44; }
+  .age-seal-10 { color: #1e88ff; }
+  .age-seal-12 { color: #ffd000; }
+  .age-seal-14 { color: #ff8c00; }
+  .age-seal-16 { color: #ff2e2e; }
+  .age-seal-18 { color: #ffffff; background: rgba(20,20,20,0.95); border-color: #fff; }
+
+  /* VHS specs row — Hi-Fi STEREO, NTSC, etc (like the back of a real tape) */
+  .vhs-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #444;
+  }
+  .vhs-spec {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 5px 8px;
+    border: 1px solid #444;
+    letter-spacing: 1.5px;
+    color: var(--paper);
+    background: rgba(0,0,0,0.5);
+  }
+  .vhs-spec.color {
+    background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
+    color: white;
+    -webkit-text-stroke: 0.5px black;
+    border-color: white;
+  }
+  .vhs-spec.bw {
+    background: #1a1a1a; color: white; border-color: white;
+  }
+  .vhs-spec.hifi {
+    background: #ffd700; color: black; border-color: #8b6914;
+  }
+  .vhs-spec.ntsc {
+    background: var(--paper); color: #1a0a2e; border-color: #c4a878;
+  }
+  .vhs-spec.dolby {
+    background: black; color: var(--neon-yellow); border-color: var(--neon-yellow);
+  }
+  .vhs-spec.sp {
+    background: rgba(0,0,0,0.7); color: var(--neon-cyan); border-color: var(--neon-cyan);
+  }
+
+  /* Barcode at the bottom of the modal */
+  .vhs-barcode {
+    margin: 28px -8px -8px;
+    padding: 14px 20px 16px;
+    background: white;
+    color: black;
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border-top: 4px solid black;
+  }
+  .barcode-lines {
+    display: flex;
+    gap: 1px;
+    align-items: stretch;
+    height: 40px;
+    flex: 1;
+    min-width: 220px;
+  }
+  .barcode-lines .bar {
+    background: black;
+    height: 100%;
+  }
+  .barcode-text {
+    font-family: 'Courier New', 'VT323', monospace;
+    color: black;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-align: right;
+    line-height: 1.3;
+    font-weight: bold;
+  }
+  .barcode-text .small {
+    font-size: 9px;
+    color: #555;
+    display: block;
+    letter-spacing: 1px;
+    font-weight: normal;
+    margin-bottom: 2px;
+  }
+
+  /* ============ RETURN BOX (caixa de devolução, easter egg in favorites) ============ */
+  @keyframes return-box-pulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(255,46,154,0.3), inset 0 0 20px rgba(0,0,0,0.6); }
+    50% { box-shadow: 0 0 22px rgba(255,46,154,0.6), inset 0 0 25px rgba(0,0,0,0.7); }
+  }
+  @keyframes box-slot-glow {
+    0%, 100% { background: rgba(0,0,0,0.8); }
+    50% { background: rgba(20,0,30,0.95); }
+  }
+  @keyframes tape-fall {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    60% { transform: translateY(40px) rotate(15deg) scale(0.7); opacity: 0.8; }
+    100% { transform: translateY(120px) rotate(30deg) scale(0.3); opacity: 0; }
+  }
+
+  .return-box {
+    margin: 30px auto 20px;
+    max-width: 320px;
+    background: linear-gradient(135deg, #4a2c1a 0%, #2a1810 50%, #1a0c08 100%);
+    border: 3px solid #3a1f10;
+    border-radius: 6px;
+    padding: 18px;
+    position: relative;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.4);
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .return-box.drag-over {
+    transform: scale(1.05);
+    animation: return-box-pulse 0.8s ease-in-out infinite;
+  }
+  .return-box-label {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--paper);
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.7);
+  }
+  .return-box-slot {
+    background: rgba(0,0,0,0.85);
+    height: 28px;
+    border-radius: 4px 4px 14px 14px;
+    box-shadow:
+      inset 0 4px 8px rgba(0,0,0,0.9),
+      inset 0 -2px 0 rgba(255,255,255,0.05);
+    position: relative;
+    margin-bottom: 8px;
+    animation: box-slot-glow 3s ease-in-out infinite;
+  }
+  .return-box-slot::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 10%; right: 10%; height: 4px;
+    background: #000;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.9);
+  }
+  .return-box-hint {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: #b89060;
+    font-style: italic;
+  }
+  .return-box-hint kbd {
+    background: var(--paper);
+    color: #1a0a2e;
+    padding: 1px 6px;
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    border-radius: 2px;
+    margin: 0 2px;
+  }
+
+  /* Make favorite cards draggable */
+  .vhs-tape[draggable="true"] {
+    cursor: grab;
+  }
+  .vhs-tape[draggable="true"]:active {
+    cursor: grabbing;
+  }
+  .vhs-tape.dragging {
+    opacity: 0.4;
+    transform: rotate(8deg) scale(0.9);
+  }
+  .vhs-tape.falling-in-box {
+    animation: tape-fall 0.6s ease-in forwards;
+    pointer-events: none;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ============ VHS FOOTER + CINÊ PRIVÊ DOOR ============ */
+  .vhs-footer {
+    margin-top: 30px;
+    padding: 20px 10px 80px;
+    border-top: 4px solid #4a3220;
+    text-align: center;
+    color: #5a4030;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    letter-spacing: 2px;
+  }
+  /* The secret door — looks like just a separator character */
+  .cine-door {
+    display: inline-block;
+    color: #2a1a10;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .cine-door:hover {
+    color: var(--neon-pink);
+    text-shadow: 0 0 8px var(--neon-pink);
+    transform: scale(1.4);
+  }
+
+  /* Black plastic curtain that opens before entering */
+  @keyframes curtain-shimmer {
+    0%, 100% { background-position: 0 0; }
+    50% { background-position: 100px 100px; }
+  }
+  .cine-curtain {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 11000;
+    pointer-events: none;
+  }
+  .curtain-half {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 50%;
+    background:
+      repeating-linear-gradient(90deg,
+        #0a0a0a 0px, #0a0a0a 6px,
+        #1a1a1a 6px, #1a1a1a 12px,
+        #050505 12px, #050505 14px);
+    background-size: 18px 100%;
+    transition: transform 1.2s cubic-bezier(0.5, 0, 0.5, 1);
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.9);
+  }
+  .curtain-left { left: 0; transform: translateX(0); }
+  .curtain-right { right: 0; transform: translateX(0); }
+  .cine-curtain.opening .curtain-left { transform: translateX(-100%); }
+  .cine-curtain.opening .curtain-right { transform: translateX(100%); }
+  .cine-curtain.closing .curtain-left { transform: translateX(0); }
+  .cine-curtain.closing .curtain-right { transform: translateX(0); }
+  .curtain-sign {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    color: var(--neon-pink);
+    border: 3px solid var(--neon-pink);
+    padding: 16px 30px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-align: center;
+    box-shadow: 0 0 30px var(--neon-pink), inset 0 0 15px rgba(255,46,154,0.3);
+    animation: neon-pulse 1s infinite;
+    z-index: 2;
+  }
+  .curtain-sign .curtain-sub {
+    display: block;
+    font-size: 10px;
+    color: var(--neon-yellow);
+    margin-top: 8px;
+    letter-spacing: 4px;
+    font-style: italic;
+  }
+  .cine-curtain.opening .curtain-sign,
+  .cine-curtain.closing .curtain-sign { display: none; }
+
+  .help-text { font-size: 14px; color: #999; margin-top: 4px; font-style: italic; }
+
+  /* ============ THE WITCH (floating button) ============ */
+  @keyframes witch-float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-6px) rotate(2deg); }
+  }
+  @keyframes witch-glow {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(176,38,255,0.6)); }
+    50% { filter: drop-shadow(0 0 15px rgba(255,46,154,0.8)) drop-shadow(0 0 25px rgba(176,38,255,0.5)); }
+  }
+  @keyframes sparkle-twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  @keyframes callout-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  .witch-fab {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    width: 90px;
+    height: 110px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 500;
+    padding: 0;
+    box-shadow: none;
+    transition: transform 0.2s;
+    animation: witch-float 4s ease-in-out infinite;
+  }
+  .witch-fab:hover {
+    transform: scale(1.15);
+    box-shadow: none;
+  }
+  .witch-fab:active { transform: scale(1.05); }
+  .witch-svg {
+    width: 100%;
+    height: 100%;
+    animation: witch-glow 3s ease-in-out infinite;
+  }
+  .witch-sparkles text { animation: sparkle-twinkle 2s ease-in-out infinite; }
+  .witch-sparkles text:nth-child(2) { animation-delay: 0.5s; }
+  .witch-sparkles text:nth-child(3) { animation-delay: 1s; }
+  .witch-sparkles text:nth-child(4) { animation-delay: 1.5s; }
+
+  .witch-callout {
+    position: absolute;
+    top: -8px;
+    right: -55px;
+    background: var(--neon-yellow);
+    color: black;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 6px 8px;
+    line-height: 1.4;
+    border: 2px solid black;
+    transform: rotate(8deg);
+    animation: callout-bob 2.5s ease-in-out infinite;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 2px 2px 0 var(--neon-pink);
+  }
+  .witch-callout::before {
+    content: '';
+    position: absolute;
+    left: -8px; top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: black;
+  }
+  .witch-callout::after {
+    content: '';
+    position: absolute;
+    left: -5px; top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: var(--neon-yellow);
+  }
+
+  @media (max-width: 600px) {
+    .witch-fab { width: 70px; height: 88px; bottom: 15px; left: 15px; }
+    .witch-callout { display: none; }
+  }
+
+  /* ============ WITCH'S CHAMBER (modal) ============ */
+  .witch-overlay {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: radial-gradient(circle at center, rgba(50,10,80,0.85) 0%, rgba(0,0,0,0.95) 100%);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .witch-overlay.show { display: flex; animation: flicker 0.4s; }
+
+  .witch-chamber {
+    background: linear-gradient(135deg, #1a0033 0%, #0a0612 50%, #001a33 100%);
+    border: 3px solid var(--neon-purple);
+    max-width: 900px;
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 25px;
+    position: relative;
+    box-shadow: 0 0 60px var(--neon-purple), inset 0 0 30px rgba(176,38,255,0.15);
+  }
+  .witch-chamber::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, rgba(176,38,255,0.04) 0px, rgba(176,38,255,0.04) 1px, transparent 1px, transparent 4px);
+    pointer-events: none;
+  }
+
+  .witch-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--neon-purple);
+    color: white;
+    border: 2px solid white;
+    width: 38px; height: 38px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    z-index: 5;
+  }
+  .witch-close:hover { background: var(--neon-pink); }
+
+  .witch-chamber-header {
+    text-align: center;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .witch-title {
+    display: block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: var(--neon-yellow);
+    letter-spacing: 3px;
+    animation: neon-pulse 2.5s ease-in-out infinite;
+    margin-bottom: 4px;
+  }
+  .witch-subtitle {
+    display: block;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: var(--neon-purple);
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  .witch-config {
+    background: rgba(0,0,0,0.5);
+    border: 1px dashed var(--neon-yellow);
+    padding: 14px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .witch-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 700px) {
+    .witch-body { grid-template-columns: 1fr; }
+    .witch-crystal-area { display: flex; justify-content: center; }
+  }
+
+  /* Big crystal ball */
+  @keyframes crystal-pulse {
+    0%, 100% { box-shadow: inset -20px -20px 40px rgba(0,0,0,0.4), 0 0 30px var(--neon-purple), 0 0 50px var(--neon-pink); }
+    50% { box-shadow: inset -20px -20px 40px rgba(0,0,0,0.4), 0 0 50px var(--neon-pink), 0 0 70px var(--neon-purple); }
+  }
+  @keyframes mist-swirl {
+    0% { transform: rotate(0deg) scale(1); opacity: 0.4; }
+    50% { transform: rotate(180deg) scale(1.1); opacity: 0.6; }
+    100% { transform: rotate(360deg) scale(1); opacity: 0.4; }
+  }
+
+  .witch-crystal-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .crystal-ball-big {
+    width: 180px;
+    position: relative;
+  }
+  .crystal-inner {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%,
+      rgba(255,255,255,0.4) 0%,
+      rgba(255,46,154,0.5) 25%,
+      rgba(176,38,255,0.7) 60%,
+      rgba(0,30,80,0.9) 100%);
+    position: relative;
+    overflow: hidden;
+    animation: crystal-pulse 3s ease-in-out infinite;
+  }
+  .crystal-inner::before {
+    content: '';
+    position: absolute;
+    top: 10%; left: 10%; right: 10%; bottom: 10%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+      transparent 0%, rgba(255,46,154,0.3) 25%,
+      transparent 50%, rgba(0,240,255,0.3) 75%, transparent 100%);
+    animation: mist-swirl 8s linear infinite;
+    filter: blur(8px);
+  }
+  .crystal-inner::after {
+    content: '';
+    position: absolute;
+    top: 12%; left: 22%;
+    width: 28%; height: 22%;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.6), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .crystal-content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    z-index: 2;
+    padding: 20px;
+  }
+  .crystal-idle .crystal-eye {
+    font-size: 32px;
+    color: var(--neon-yellow);
+    animation: neon-pulse 2s infinite;
+    margin-bottom: 8px;
+  }
+  .crystal-idle .crystal-hint {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.2;
+    text-shadow: 0 0 4px rgba(0,0,0,0.8);
+  }
+  .crystal-stand {
+    width: 140px;
+    height: 18px;
+    margin: -8px auto 0;
+    background: linear-gradient(180deg, #5a2a1a 0%, #2a0f05 100%);
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+  }
+  .crystal-stand::before {
+    content: '';
+    position: absolute;
+    bottom: -8px; left: 30px; right: 30px;
+    height: 14px;
+    background: #1a0a05;
+    border-radius: 4px;
+  }
+
+  /* When the witch is divining */
+  .crystal-ball-big.divining .crystal-inner {
+    animation: crystal-pulse 0.8s ease-in-out infinite;
+  }
+  .crystal-divining {
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    color: white;
+    text-shadow: 0 0 6px var(--neon-yellow);
+    line-height: 1.3;
+    animation: flicker 0.5s infinite;
+  }
+  .crystal-divining .visions {
+    font-size: 14px;
+    color: var(--neon-yellow);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .witch-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .witch-controls textarea {
+    background: rgba(0,0,0,0.7);
+    color: var(--neon-green);
+    border: 2px solid var(--neon-purple);
+    padding: 12px 14px;
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    resize: vertical;
+    min-height: 70px;
+    width: 100%;
+  }
+  .witch-controls textarea:focus {
+    outline: none;
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 12px var(--neon-pink);
+  }
+
+  .witch-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .witch-ask {
+    flex: 1;
+    background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-pink) 100%) !important;
+    color: white !important;
+    box-shadow: 4px 4px 0 var(--neon-yellow) !important;
+    font-size: 12px !important;
+  }
+  .witch-ask:hover { box-shadow: 6px 6px 0 var(--neon-yellow) !important; }
+  .witch-ask:disabled {
+    background: #444 !important;
+    cursor: wait;
+    animation: none;
+  }
+  .witch-config-btn {
+    background: var(--neon-yellow) !important;
+    color: black !important;
+    padding: 8px 12px !important;
+    font-size: 16px !important;
+    box-shadow: 4px 4px 0 var(--neon-cyan) !important;
+  }
+  .witch-lazy {
+    background: var(--neon-orange) !important;
+    color: black !important;
+    padding: 8px 12px !important;
+    font-size: 18px !important;
+    box-shadow: 4px 4px 0 var(--neon-purple) !important;
+  }
+  .witch-lazy:hover { box-shadow: 6px 6px 0 var(--neon-purple) !important; transform: translate(-2px, -2px); }
+
+  .witch-examples {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .ai-example {
+    background: rgba(176, 38, 255, 0.2);
+    color: var(--neon-purple);
+    border: 1px solid var(--neon-purple);
+    padding: 4px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+  }
+  .ai-example:hover {
+    background: var(--neon-purple);
+    color: white;
+  }
+
+  .witch-results {
+    position: relative;
+    z-index: 1;
+  }
+  .ai-reasoning {
+    background: rgba(0, 240, 255, 0.08);
+    border-left: 4px solid var(--neon-cyan);
+    padding: 12px 16px; margin: 12px 0;
+    color: #ddd; font-size: 17px; line-height: 1.5;
+    font-style: italic;
+  }
+  .ai-reasoning::before {
+    content: '"';
+    font-family: serif; font-size: 30px;
+    color: var(--neon-cyan); float: left; margin-right: 6px;
+  }
+  .ai-suggestions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .ai-suggestion {
+    background: rgba(0,0,0,0.5);
+    border: 2px solid var(--neon-cyan);
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ai-suggestion:hover {
+    border-color: var(--neon-pink);
+    background: rgba(255, 46, 154, 0.15);
+    transform: translateY(-3px);
+  }
+  .ai-suggestion .title {
+    color: var(--neon-yellow);
+    font-family: 'VT323', monospace;
+    font-size: 18px; font-weight: bold;
+    line-height: 1.1;
+  }
+  .ai-suggestion .year {
+    color: var(--neon-cyan);
+    font-size: 13px;
+    font-family: 'Press Start 2P', monospace;
+  }
+  .ai-suggestion .reason {
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .ai-suggestion .status {
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(255,255,255,0.2);
+    font-size: 12px;
+    color: var(--neon-green);
+  }
+  .ai-suggestion .status.not-found { color: #999; }
+  .ai-suggestion.unmatched {
+    border-color: #555;
+    opacity: 0.7;
+    cursor: default;
+  }
+  .ai-suggestion.unmatched:hover {
+    transform: none;
+    background: rgba(0,0,0,0.5);
+    border-color: #555;
+  }
+  .ai-suggestion img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    image-rendering: pixelated;
+    border: 1px solid var(--neon-cyan);
+  }
+
+  /* UNREWOUND PROMPT */
+  .unrewound-prompt {
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--neon-cyan);
+    font-family: 'VT323', monospace;
+  }
+  .unrewound-marquee {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    padding: 10px 14px;
+    background: black;
+    border: 2px solid var(--neon-pink);
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    animation: rewind-marquee-blink 0.6s infinite;
+  }
+  .unrewound-prompt p { font-size: 24px; margin-bottom: 20px; color: var(--neon-yellow); }
+  .unrewound-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+  /* VHS Loading Transition Screen (SMPTE Color Bars with glitches) */
+  .vhs-loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to right,
+      #d9d9d9 0%, #d9d9d9 14.28%,
+      #d9d900 14.28%, #d9d900 28.56%,
+      #00d9d9 28.56%, #00d9d9 42.84%,
+      #00d900 42.84%, #00d900 57.12%,
+      #d900d9 57.12%, #d900d9 71.4%,
+      #d90000 71.4%, #d90000 85.68%,
+      #0000d9 85.68%, #0000d9 100%
+    );
+    font-family: 'VT323', monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    z-index: 5;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    animation: chewed-shake 0.18s infinite, vhs-color-glitch 4s steps(4) infinite;
+    overflow: hidden;
+  }
+  .vhs-tracking-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.28);
+    mix-blend-mode: overlay;
+    filter: blur(2px);
+    animation: tracking-bar 1.8s linear infinite;
+  }
+  .vhs-play-indicator {
+    font-size: 36px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    animation: flicker 1s infinite;
+    background: black;
+    color: #39ff14; /* Verde neon fosforoso */
+    padding: 4px 12px;
+    align-self: flex-start;
+    border: 2px solid #39ff14;
+    box-shadow: 2px 2px 0 black;
+    position: relative;
+    z-index: 6;
+  }
+  .vhs-time-counter {
+    font-size: 32px;
+    letter-spacing: 1px;
+    background: black;
+    color: #39ff14; /* Verde neon fosforoso */
+    padding: 4px 12px;
+    align-self: flex-end;
+    border: 2px solid #39ff14;
+    box-shadow: 2px 2px 0 black;
+    max-width: fit-content;
+    position: relative;
+    z-index: 6;
+  }
+  @keyframes tracking-bar {
+    0% { top: -30px; }
+    100% { top: 110%; }
+  }
+  @keyframes vhs-color-glitch {
+    0%, 100% { filter: hue-rotate(0deg) saturate(1.1) contrast(1); }
+    25% { filter: hue-rotate(8deg) saturate(1.4) contrast(1.15); }
+    50% { filter: hue-rotate(-6deg) saturate(0.95) brightness(1.05); }
+    75% { filter: hue-rotate(15deg) saturate(1.25) contrast(0.9); }
+  }
+
+  /* Custom Select Style (Nostalgic Flag Dropdown) */
+  .custom-select {
+    position: relative;
+    display: inline-block;
+    min-width: 140px;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    user-select: none;
+    z-index: 1000;
+  }
+  .custom-select-trigger {
+    background: black;
+    color: var(--neon-cyan);
+    border: 2px solid var(--neon-cyan);
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    justify-content: space-between;
+    box-shadow: 3px 3px 0 var(--neon-purple);
+  }
+  .custom-select-trigger::after {
+    content: '▼';
+    font-size: 12px;
+    color: var(--neon-cyan);
+  }
+  .custom-select.open .custom-select-trigger::after {
+    content: '▲';
+  }
+  .custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: black;
+    border: 2px solid var(--neon-cyan);
+    border-top: none;
+    display: none;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  }
+  .custom-select.open .custom-select-options {
+    display: block;
+  }
+  .custom-option {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--neon-green);
+  }
+  .custom-option:hover {
+    background: var(--crt-glow);
+    color: var(--neon-yellow);
+  }
+  .flag-img {
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+    border: 1px solid #333;
+  }
+</style>
+<script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+<div class="crt-screen"></div>
+<div class="corner-sticker tl">★ BE KIND<br>REWIND ★</div>
+<div class="corner-sticker br">$1.99/NITE</div>
+<div class="gold-sticker">★ CLIENTE OURO ★<br>ISENTO DE MULTA</div>
+
+<div class="container">
+
+  <header>
+    <div class="logo"><span class="vhs">VHS</span> RENTAL</div>
+    <div class="tagline">▓▒░ A SUA LOCADORA NO TEMPO ░▒▓</div>
+  </header>
+
+  <div class="marquee">
+    <span>★ ABERTO 24 HORAS ★ FILMES NOVOS TODA SEXTA ★ MULTA POR ATRASO: 1 PIPOCA ★ NÃO ESQUEÇA DE REBOBINAR ★ HOJE: NOITE DE TERROR ★ COMBO PIZZA + FILME ★</span>
+  </div>
+
+  <div id="api-setup" class="api-setup">
+    <h2>◢ INICIALIZAR SISTEMA ◣</h2>
+    <p>Pra ligar a locadora, precisamos da sua chave da API do <strong>TMDB</strong> (gratuita).<br>
+    Faça login em <a href="https://www.themoviedb.org/signup" target="_blank">themoviedb.org</a> → Settings → API → copie a <strong>API Read Access Token</strong> ou a <strong>API Key (v3 auth)</strong>.</p>
+    <div class="api-input-row">
+      <input type="text" id="api-key-input" placeholder="Cole sua API key aqui..." autocomplete="off">
+      <button onclick="saveApiKey()">▶ LIGAR TV</button>
+    </div>
+    <p style="margin-top: 15px; font-size: 14px; color: #999;">Sua chave fica salva só no seu navegador. Nada vai pra lugar nenhum.</p>
+  </div>
+
+  <div id="app" class="hidden">
+
+    <nav>
+      <div class="nav-tabs">
+        <button class="tab-btn active" data-view="home">▶ INÍCIO</button>
+        <button class="tab-btn" data-view="filters">▶ FILTROS</button>
+        <button class="tab-btn" data-view="people">▶ ATORES</button>
+        <button class="tab-btn" data-view="favorites">▶ MINHA ESTANTE</button>
+        <button class="tab-btn" data-view="card">▶ MEU CARTÃO</button>
+      </div>
+      <div class="nav-controls">
+        <div class="custom-select" id="country-select-container">
+          <div class="custom-select-trigger" id="country-select-trigger">
+            <img src="https://flagcdn.com/w20/br.png" alt="Brasil" class="flag-img">
+            <span>Brasil</span>
+          </div>
+          <div class="custom-select-options" id="country-select-options">
+            <div class="custom-option" data-value="BR-pt-BR">
+              <img src="https://flagcdn.com/w20/br.png" alt="Brasil" class="flag-img">
+              <span>Brasil</span>
+            </div>
+            <div class="custom-option" data-value="US-en-US">
+              <img src="https://flagcdn.com/w20/us.png" alt="USA" class="flag-img">
+              <span>USA</span>
+            </div>
+            <div class="custom-option" data-value="ES-es-ES">
+              <img src="https://flagcdn.com/w20/es.png" alt="Espanha" class="flag-img">
+              <span>Espanha</span>
+            </div>
+            <div class="custom-option" data-value="PT-pt-PT">
+              <img src="https://flagcdn.com/w20/pt.png" alt="Portugal" class="flag-img">
+              <span>Portugal</span>
+            </div>
+            <div class="custom-option" data-value="FR-fr-FR">
+              <img src="https://flagcdn.com/w20/fr.png" alt="França" class="flag-img">
+              <span>França</span>
+            </div>
+            <div class="custom-option" data-value="DE-de-DE">
+              <img src="https://flagcdn.com/w20/de.png" alt="Alemanha" class="flag-img">
+              <span>Alemanha</span>
+            </div>
+            <div class="custom-option" data-value="IT-it-IT">
+              <img src="https://flagcdn.com/w20/it.png" alt="Itália" class="flag-img">
+              <span>Itália</span>
+            </div>
+            <div class="custom-option" data-value="JP-ja-JP">
+              <img src="https://flagcdn.com/w20/jp.png" alt="Japão" class="flag-img">
+              <span>Japão</span>
+            </div>
+            <div class="custom-option" data-value="KR-ko-KR">
+              <img src="https://flagcdn.com/w20/kr.png" alt="Coreia" class="flag-img">
+              <span>Coreia</span>
+            </div>
+            <div class="custom-option" data-value="MX-es-MX">
+              <img src="https://flagcdn.com/w20/mx.png" alt="México" class="flag-img">
+              <span>México</span>
+            </div>
+          </div>
+        </div>
+        <span id="loyalty-badge" class="loyalty-badge" onclick="switchView('card')" title="Seus pontos de fidelidade">★ 0 pts</span>
+        <button id="sfx-toggle" class="secondary" onclick="sfx.toggle()" title="Liga/Desliga sons">🔊</button>
+        <button class="secondary" onclick="resetApiKey()" title="Trocar chave">⚙</button>
+      </div>
+    </nav>
+
+    <div class="search-bar">
+      <input type="search" id="search-input" placeholder="🔍 Buscar filme, ator, diretor...">
+      <button onclick="doSearch()">PROCURAR</button>
+    </div>
+
+    <div id="main-content">
+      <div class="loading">Carregando catálogo...</div>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- TRAILER PLAYER -->
+<div id="trailer-overlay" class="trailer-overlay" onclick="if(event.target===this){ if(document.getElementById('rewind-prompt')) closeTrailerFull(); else closeTrailer(); }">
+  <div class="trailer-modal" id="trailer-player"></div>
+</div>
+
+<!-- THE WITCH (floating button) -->
+<button id="witch-fab" class="witch-fab" onclick="openWitch()" aria-label="Consultar a vidente">
+  <svg class="witch-svg" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+    <!-- Star sparkles around her -->
+    <g class="witch-sparkles">
+      <text x="8" y="20" fill="#ffeb00" font-size="10">✦</text>
+      <text x="82" y="35" fill="#00f0ff" font-size="8">✧</text>
+      <text x="15" y="60" fill="#ff2e9a" font-size="9">✦</text>
+      <text x="88" y="75" fill="#ffeb00" font-size="7">✧</text>
+    </g>
+    <!-- Crystal ball base/stand -->
+    <ellipse cx="50" cy="118" rx="22" ry="4" fill="#3a1a0a"/>
+    <path d="M 35 118 L 38 105 L 62 105 L 65 118 Z" fill="#5a2a1a"/>
+    <ellipse cx="50" cy="105" rx="12" ry="3" fill="#3a1a0a"/>
+    <!-- Crystal ball -->
+    <circle cx="50" cy="92" r="14" fill="#b026ff" opacity="0.6"/>
+    <circle cx="50" cy="92" r="14" fill="url(#ballGrad)" />
+    <circle cx="46" cy="88" r="4" fill="#fff" opacity="0.4"/>
+    <!-- Witch body (robe) -->
+    <path d="M 30 78 Q 25 60 32 45 L 68 45 Q 75 60 70 78 Z" fill="#1a0033"/>
+    <!-- Cape collar -->
+    <path d="M 32 48 Q 50 42 68 48 L 65 52 Q 50 47 35 52 Z" fill="#330066"/>
+    <!-- Hands on ball -->
+    <ellipse cx="38" cy="82" rx="4" ry="5" fill="#e8c89c"/>
+    <ellipse cx="62" cy="82" rx="4" ry="5" fill="#e8c89c"/>
+    <!-- Face -->
+    <ellipse cx="50" cy="35" rx="10" ry="11" fill="#e8c89c"/>
+    <!-- Hair -->
+    <path d="M 40 30 Q 38 42 42 46 L 35 44 Q 32 38 35 28 Z" fill="#1a0a05"/>
+    <path d="M 60 30 Q 62 42 58 46 L 65 44 Q 68 38 65 28 Z" fill="#1a0a05"/>
+    <!-- Eyes (closed, mystical) -->
+    <path d="M 44 35 Q 46 33 48 35" stroke="#1a0a05" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M 52 35 Q 54 33 56 35" stroke="#1a0a05" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <!-- Mole / beauty mark -->
+    <circle cx="42" cy="40" r="0.8" fill="#1a0a05"/>
+    <!-- Lips -->
+    <path d="M 47 41 Q 50 43 53 41" stroke="#993355" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Witch hat -->
+    <path d="M 35 25 L 65 25 L 70 27 L 30 27 Z" fill="#0a0612"/>
+    <path d="M 38 25 L 62 25 L 55 5 Q 53 2 50 4 Q 47 2 45 5 Z" fill="#0a0612"/>
+    <!-- Hat band -->
+    <rect x="36" y="22" width="28" height="3" fill="#ff2e9a"/>
+    <!-- Star on hat -->
+    <text x="46" y="18" fill="#ffeb00" font-size="7">★</text>
+    <!-- Gradient for crystal ball -->
+    <defs>
+      <radialGradient id="ballGrad" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#ff2e9a" stop-opacity="0.8"/>
+        <stop offset="50%" stop-color="#b026ff" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.6"/>
+      </radialGradient>
+    </defs>
+  </svg>
+  <div class="witch-callout">consulte<br>a vidente</div>
+</button>
+
+<!-- WITCH'S CHAMBER (the oracle modal) -->
+<div id="witch-overlay" class="witch-overlay" onclick="if(event.target===this) closeWitch()">
+  <div class="witch-chamber">
+    <button class="witch-close" onclick="closeWitch()" aria-label="Fechar">×</button>
+    <div class="witch-chamber-header">
+      <span class="witch-title">◈ MADAME VHS ◈</span>
+      <span class="witch-subtitle">vidente dos cinemas perdidos</span>
+    </div>
+
+    <div id="witch-gemini-config" class="witch-config hidden">
+      <p style="font-size:15px; color:var(--neon-yellow); margin-bottom:8px;">
+        Pra eu enxergar nos cristais, preciso da sua chave do Gemini.<br>
+        <span style="font-size:13px; color:#aaa;">Pegue em <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--neon-cyan)">aistudio.google.com/apikey</a> — é gratuita.</span>
+      </p>
+      <div class="api-input-row">
+        <input type="text" id="gemini-key-input" placeholder="Cole a Gemini API key..." autocomplete="off">
+        <button onclick="saveGeminiKey()">SALVAR</button>
+      </div>
+    </div>
+
+    <div class="witch-body">
+      <div class="witch-crystal-area">
+        <div class="crystal-ball-big" id="crystal-ball">
+          <div class="crystal-inner">
+            <div class="crystal-content" id="crystal-content">
+              <div class="crystal-idle">
+                <div class="crystal-eye">◉</div>
+                <div class="crystal-hint">conte-me<br>o que procura...</div>
+              </div>
+            </div>
+          </div>
+          <div class="crystal-stand"></div>
+        </div>
+      </div>
+
+      <div class="witch-controls">
+        <textarea id="ai-query" placeholder="Descreva um filme... ex: 'aquele dos anos 80 com replicantes e chuva', 'comédia romântica em Paris', 'thriller claustrofóbico'..." rows="3"></textarea>
+        <div class="witch-buttons">
+          <button onclick="askOracle()" id="ai-ask-btn" class="witch-ask">✨ CONSULTAR A BOLA</button>
+          <button onclick="askOracleLazy()" id="ai-lazy-btn" class="witch-lazy" title="Atendente preguiçoso escolhe pra você">😴</button>
+          <button onclick="toggleGeminiConfig()" class="witch-config-btn" title="Configurar chave Gemini">⚙</button>
+        </div>
+        <div class="witch-examples">
+          <span class="ai-example" onclick="askOracleWith('filme de assalto com plano elaborado e equipe colorida')">assalto com plano elaborado</span>
+          <span class="ai-example" onclick="askOracleWith('comédia escrachada anos 90 sobre amigos que vão a Las Vegas')">comédia em Vegas</span>
+          <span class="ai-example" onclick="askOracleWith('thriller psicológico com twist no final, num apartamento')">thriller claustrofóbico</span>
+          <span class="ai-example" onclick="askOracleWith('anime japonês de aventura espacial')">anime espacial</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="ai-results" class="witch-results"></div>
+  </div>
+</div>
+
+
+<script>
+  // ============ STATE ============
+  const state = {
+    apiKey: localStorage.getItem('tmdb_api_key') || '',
+    geminiKey: localStorage.getItem('gemini_api_key') || '',
+    country: localStorage.getItem('tmdb_country') || 'BR-pt-BR',
+    view: 'home',
+    favorites: JSON.parse(localStorage.getItem('vhs_favorites') || '[]'),
+    currentPage: 1,
+    currentQuery: null,
+    genres: [],
+    trailerTitles: {},
+    rewindTimer: null,
+    points: parseInt(localStorage.getItem('vhs_points') || '0', 10),
+    fines: parseInt(localStorage.getItem('vhs_fines') || '0', 10),
+    tapePositions: JSON.parse(localStorage.getItem('vhs_tape_positions') || '{}'),
+    ytPlayer: null,
+    currentTrailerId: null,
+    currentTrailerKey: null,
+    currentTrailerTime: 0,
+    // Filters state — all combined with AND logic
+    filters: {
+      keywords: [],     // [{id, name}]
+      genres: [],       // [id, ...] — combined with AND
+      people: [],       // [{id, name}] — actors/directors
+      yearFrom: null,
+      yearTo: null,
+      ratingMin: null,
+      sortBy: 'popularity.desc'
+    }
+  };
+
+  const TMDB_BASE = 'https://api.themoviedb.org/3';
+  const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
+  const IMG_LARGE = 'https://image.tmdb.org/t/p/w500';
+
+  function isV4Token(k) { return k && k.length > 40; }
+
+  async function tmdbFetch(path, params = {}) {
+    const parts = state.country.split('-');
+    const region = parts[0];
+    const language = parts.slice(1).join('-');
+
+    const queryParams = new URLSearchParams({ language, region, ...params });
+    const headers = { 'Content-Type': 'application/json' };
+    let url;
+
+    if (isV4Token(state.apiKey)) {
+      headers['Authorization'] = `Bearer ${state.apiKey}`;
+      url = `${TMDB_BASE}${path}?${queryParams}`;
+    } else {
+      queryParams.set('api_key', state.apiKey);
+      url = `${TMDB_BASE}${path}?${queryParams}`;
+    }
+
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`API ${res.status}: ${txt}`);
+    }
+    return res.json();
+  }
+
+  // ============ AI ORACLE (Gemini) ============
+  const GEMINI_MODEL = 'gemini-2.5-flash-lite';
+  const GEMINI_FALLBACK = 'gemini-2.5-flash';
+  const GEMINI_ENDPOINT = (model, key) =>
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+
+  function toggleGeminiConfig() {
+    const el = document.getElementById('witch-gemini-config');
+    el.classList.toggle('hidden');
+    if (!el.classList.contains('hidden')) {
+      document.getElementById('gemini-key-input').value = state.geminiKey || '';
+      document.getElementById('gemini-key-input').focus();
+    }
+  }
+
+  function openWitch() {
+    sfx.click();
+    document.getElementById('witch-overlay').classList.add('show');
+    // Auto-show config if no key yet
+    if (!state.geminiKey) {
+      document.getElementById('witch-gemini-config').classList.remove('hidden');
+    }
+    setTimeout(() => {
+      const el = state.geminiKey ? document.getElementById('ai-query') : document.getElementById('gemini-key-input');
+      if (el) el.focus();
+    }, 100);
+  }
+
+  function closeWitch() {
+    document.getElementById('witch-overlay').classList.remove('show');
+  }
+
+  function saveGeminiKey() {
+    const key = document.getElementById('gemini-key-input').value.trim();
+    if (!key) { alert('Cola uma chave válida.'); return; }
+    state.geminiKey = key;
+    localStorage.setItem('gemini_api_key', key);
+    document.getElementById('witch-gemini-config').classList.add('hidden');
+    setCrystalContent(`<div class="crystal-divining">A bruxa olha para você...<div class="visions">"agora pergunte, querido(a)"</div></div>`);
+    document.getElementById('ai-query').focus();
+  }
+
+  function askOracleWith(text) {
+    document.getElementById('ai-query').value = text;
+    askOracle();
+  }
+
+  // "Tô com preguiça, escolhe um pra mim" — atendente preguiçoso mode
+  function askOracleLazy() {
+    sfx.click();
+    const prompts = [
+      'tô com preguiça, me indica qualquer filme bom que ninguém aluga',
+      'me surpreenda com um filme cult/B-movie esquecido',
+      'recomenda umas joias estranhas que tão pegando poeira na prateleira',
+      'um filme pra desligar o cérebro depois do trabalho',
+      'qualquer coisa que valha a pena mas que eu nunca ouvi falar'
+    ];
+    const query = prompts[Math.floor(Math.random() * prompts.length)];
+    document.getElementById('ai-query').value = query;
+    askOracle('lazy');
+  }
+
+  // Pool of "witch speaking" phrases shown in the crystal ball while loading
+  const WITCH_PHRASES = [
+    'Hmm... vejo algo entre as névoas...',
+    'As fitas se movem na escuridão...',
+    'O passado e o cinema sussurram...',
+    'Sinto um filme... talvez vários...',
+    'Os créditos rolam nos meus olhos...',
+    'Espere... a bobina está girando...'
+  ];
+
+  function setCrystalContent(html) {
+    document.getElementById('crystal-content').innerHTML = html;
+  }
+
+  function setCrystalDivining(isDivining) {
+    document.getElementById('crystal-ball').classList.toggle('divining', isDivining);
+  }
+
+  async function askOracle(mode = 'normal') {
+    const query = document.getElementById('ai-query').value.trim();
+    if (!query) return;
+
+    if (!state.geminiKey) {
+      document.getElementById('witch-gemini-config').classList.remove('hidden');
+      setCrystalContent(`<div class="crystal-divining" style="color:var(--neon-pink)">Preciso da chave do Gemini primeiro, querido(a)...</div>`);
+      return;
+    }
+
+    const btn = document.getElementById('ai-ask-btn');
+    btn.disabled = true;
+    btn.textContent = '◈ DIVINANDO...';
+    setCrystalDivining(true);
+    showAIResults('');
+
+    // Cycle witch phrases while we wait
+    const phrase = mode === 'lazy'
+      ? '*suspira* ... deixa eu ver o que tem aqui...'
+      : WITCH_PHRASES[Math.floor(Math.random() * WITCH_PHRASES.length)];
+    setCrystalContent(`
+      <div class="crystal-divining">
+        ${escapeHtml(phrase)}
+        <div class="visions">${mode === 'lazy' ? 'remexendo nas prateleiras...' : 'consultando os ventos do cinema...'}</div>
+      </div>
+    `);
+
+    try {
+      const suggestion = await callGemini(query, mode);
+      setCrystalDivining(false);
+      setCrystalContent(`
+        <div class="crystal-divining" style="color:var(--neon-yellow)">
+          ◈ ${(suggestion.movies || []).length} visões reveladas ◈
+          <div class="visions" style="color:white">role abaixo para ver</div>
+        </div>
+      `);
+      await displaySuggestions(suggestion, query);
+      awardPoints(2, 'consultou a Madame');
+    } catch (err) {
+      setCrystalDivining(false);
+      setCrystalContent(`<div class="crystal-divining" style="color:var(--neon-pink)">A bola escureceu...<div class="visions">${escapeHtml(err.message)}</div></div>`);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '✨ CONSULTAR A BOLA';
+    }
+  }
+
+  function showAIResults(html) {
+    document.getElementById('ai-results').innerHTML = html;
+  }
+
+  async function callGemini(userQuery, mode = 'normal') {
+    const baseRules = `REGRAS IMPORTANTES:
+1. Responda APENAS com JSON válido, sem markdown, sem \`\`\`, sem texto antes ou depois.
+2. Use SEMPRE o título original em inglês (ou no idioma original do filme) — isso ajuda na busca da TMDB. Ex: "Pulp Fiction" não "Tempo de Violência".
+3. Se a descrição for vaga, ofereça variedade (não só blockbusters).
+4. Inclua uma breve razão (1 frase curta) explicando POR QUE cada filme bate com o que o cliente pediu.
+5. No campo "reasoning" inicial, faça um comentário curto (1-2 frases) como se fosse o atendente conversando, explicando sua linha de raciocínio.
+6. Se o filme for dos anos 80 ou 90, ocasionalmente solte uma fofoca, curiosidade ou "lenda urbana" da época sobre o filme/elenco/produção no campo "reason" — coisas que um atendente fofoqueiro contaria balcão a balcão. Ex: "dizem que o ator quase morreu naquela cena", "esse foi o último filme que passou no cinema de bairro antes de fechar", "a produção gastou metade do orçamento só nos efeitos". Não invente fatos falsos — use curiosidades reais conhecidas, mas com tom de fofoca.
+
+Formato EXATO da resposta:
+{
+  "reasoning": "Hmm, pelo que você descreveu, parece que está procurando...",
+  "movies": [
+    {"title": "Original Title", "year": 1999, "reason": "Razão curta em português."},
+    ...
+  ]
+}`;
+
+    let systemPrompt;
+    if (mode === 'lazy') {
+      systemPrompt = `Você é o atendente entediado e levemente preguiçoso de uma locadora de bairro dos anos 90. É fim de turno, você queria estar em casa, e o cliente apareceu pedindo "qualquer coisa". Você vai indicar 3 a 5 filmes que talvez tenham sobrado na prateleira (pense em filmes menos óbvios, cult, B-movies esquecidos, joias escondidas que ninguém aluga), e seu comentário ("reasoning") tem que SOAR como um atendente que está com preguiça mas conhece muito de cinema. Use frases tipo:
+- "Olha, 'O Predador' tá alugado, mas tem esse aqui que ninguém nunca leva..."
+- "Já viu esse? Não? Pois é, todo mundo passa direto e perde."
+- "Se você gosta dessas coisas estranhas, leva esse aqui que tá pegando poeira."
+- "Não é Spielberg, mas dá pra desligar o cérebro depois do trabalho."
+
+Mostre personalidade — seja resmungão mas afetuoso, como um cinéfilo cansado.
+
+${baseRules}`;
+    } else {
+      systemPrompt = `Você é o atendente de uma locadora de filmes dos anos 90, com conhecimento enciclopédico de cinema mundial. O cliente vai descrever um filme com suas próprias palavras (pode ser vago, com detalhes parciais, ou pedindo recomendações por tema/clima). Sua missão é sugerir entre 4 e 8 filmes que melhor casem com a descrição.
+
+${baseRules}`;
+    }
+
+    const body = {
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: 'user', parts: [{ text: userQuery }] }],
+      generationConfig: {
+        temperature: 0.8,
+        responseMimeType: 'application/json'
+      }
+    };
+
+    let data;
+    try {
+      data = await geminiRequest(GEMINI_MODEL, body);
+    } catch (err) {
+      // Fallback to bigger model if lite fails (e.g. region restriction)
+      console.warn('Lite model failed, trying fallback:', err.message);
+      data = await geminiRequest(GEMINI_FALLBACK, body);
+    }
+
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Gemini não retornou resposta');
+
+    // Parse JSON (Gemini sometimes wraps in ```json despite instructions)
+    const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```\s*$/, '').trim();
+    try {
+      return JSON.parse(cleaned);
+    } catch (e) {
+      throw new Error('Resposta do Gemini não veio em JSON válido. Tente reformular a pergunta.');
+    }
+  }
+
+  async function geminiRequest(model, body) {
+    const res = await fetch(GEMINI_ENDPOINT(model, state.geminiKey), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      let msg = `Gemini ${res.status}`;
+      try {
+        const err = await res.json();
+        msg = err?.error?.message || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+    return res.json();
+  }
+
+  async function displaySuggestions(suggestion, originalQuery) {
+    const movies = suggestion.movies || [];
+    if (!movies.length) {
+      showAIResults('<div class="ai-thinking">O oráculo não achou nada. Tenta descrever de outro jeito.</div>');
+      return;
+    }
+
+    // Show reasoning + skeleton cards while we look up each on TMDB
+    const skeletonHtml = movies.map((m, i) => `
+      <div class="ai-suggestion" id="ai-sug-${i}">
+        <div class="title">${escapeHtml(m.title)}</div>
+        <div class="year">${m.year || '????'}</div>
+        <div class="reason">${escapeHtml(m.reason || '')}</div>
+        <div class="status">◈ procurando na TMDB...</div>
+      </div>
+    `).join('');
+
+    showAIResults(`
+      ${suggestion.reasoning ? `<div class="ai-reasoning">${escapeHtml(suggestion.reasoning)}</div>` : ''}
+      <div class="ai-suggestions">${skeletonHtml}</div>
+    `);
+
+    // Look up each movie on TMDB in parallel
+    const lookups = movies.map((m, i) => lookupTmdb(m).then(tmdbMovie => ({ i, m, tmdbMovie })));
+    const results = await Promise.all(lookups);
+
+    // Replace skeleton cards with real cards
+    results.forEach(({ i, m, tmdbMovie }) => {
+      const card = document.getElementById(`ai-sug-${i}`);
+      if (!card) return;
+      if (tmdbMovie) {
+        card.onclick = () => openMovie(tmdbMovie.id);
+        card.style.cursor = 'pointer';
+        const realYear = tmdbMovie.release_date ? tmdbMovie.release_date.slice(0, 4) : (m.year || '????');
+        const poster = tmdbMovie.poster_path
+          ? `<img src="${IMG_BASE}${tmdbMovie.poster_path}" style="width:100%; aspect-ratio:2/3; object-fit:cover; margin-bottom:8px; image-rendering:pixelated; border:1px solid var(--neon-cyan)">`
+          : '';
+        card.innerHTML = `
+          ${poster}
+          <div class="title">${escapeHtml(tmdbMovie.title || m.title)}</div>
+          <div class="year">${realYear}</div>
+          <div class="reason">${escapeHtml(m.reason || '')}</div>
+          <div class="status">▶ clique para abrir</div>
+        `;
+      } else {
+        card.classList.add('unmatched');
+        card.querySelector('.status').classList.add('not-found');
+        card.querySelector('.status').textContent = '✕ não encontrado na TMDB';
+      }
+    });
+  }
+
+  async function lookupTmdb(geminiMovie) {
+    try {
+      const params = { query: geminiMovie.title };
+      if (geminiMovie.year) params.year = geminiMovie.year;
+      const data = await tmdbFetch('/search/movie', params);
+      let results = data.results || [];
+      if (!results.length && geminiMovie.year) {
+        // Retry without year — Gemini's year guess might be off by one
+        const r2 = await tmdbFetch('/search/movie', { query: geminiMovie.title });
+        results = r2.results || [];
+      }
+      if (!results.length) return null;
+      // Prefer match with matching year if available
+      if (geminiMovie.year) {
+        const yearMatch = results.find(r => r.release_date && r.release_date.startsWith(String(geminiMovie.year)));
+        if (yearMatch) return yearMatch;
+      }
+      return results[0];
+    } catch {
+      return null;
+    }
+  }
+
+
+
+
+  // ============ POINTS & FINES + LEVEL SYSTEM (gamification) ============
+  const LEVELS = [
+    { id: 'common',   name: 'CLIENTE COMUM',  threshold: 0,    color: '#888888', sub: 'novato no balcão' },
+    { id: 'bronze',   name: 'CLIENTE BRONZE', threshold: 25,   color: '#cd7f32', sub: 'já conhecido na vizinhança' },
+    { id: 'silver',   name: 'CLIENTE PRATA',  threshold: 75,   color: '#c0c0c0', sub: 'frequentador assíduo' },
+    { id: 'gold',     name: 'CLIENTE OURO',   threshold: 150,  color: '#ffd700', sub: 'isento de multa em fitas atrasadas até 1 dia' },
+    { id: 'director', name: 'DIRETORIA',      threshold: 300,  color: '#ff2e9a', sub: 'acesso aos lançamentos antes de todo mundo' },
+    { id: 'vip',      name: 'SÓCIO VIP',      threshold: 600,  color: '#b026ff', sub: 'reservas vitalícias e respeito eterno' }
+  ];
+
+  function getCurrentLevel() {
+    let current = LEVELS[0];
+    for (const lvl of LEVELS) {
+      if (state.points >= lvl.threshold) current = lvl;
+      else break;
+    }
+    return current;
+  }
+  function getNextLevel() {
+    const idx = LEVELS.indexOf(getCurrentLevel());
+    return idx < LEVELS.length - 1 ? LEVELS[idx + 1] : null;
+  }
+  function awardPoints(amount, reason) {
+    const before = getCurrentLevel();
+    state.points += amount;
+    localStorage.setItem('vhs_points', String(state.points));
+    sfx.chime();
+    showToast(`+${amount} pontos — ${reason}`, 'win');
+    const after = getCurrentLevel();
+    if (after.id !== before.id) {
+      setTimeout(() => showLevelUp(after), 700);
+    }
+    updateLoyaltyDisplay();
+  }
+  function addFine(amount, reason) {
+    state.fines += amount;
+    localStorage.setItem('vhs_fines', String(state.fines));
+    showToast(`-R$ ${amount.toFixed(2)} — ${reason}`, 'fine');
+    updateLoyaltyDisplay();
+  }
+  function showToast(msg, kind = 'info') {
+    const t = document.createElement('div');
+    t.className = `vhs-toast ${kind}`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 400);
+    }, 2400);
+  }
+  function showLevelUp(level) {
+    sfx.chime();
+    setTimeout(() => sfx.chime(), 180);
+    setTimeout(() => sfx.chime(), 360);
+    const div = document.createElement('div');
+    div.className = 'level-up-overlay';
+    div.innerHTML = `
+      <div class="level-up-card" style="--level-color: ${level.color}">
+        <div class="level-up-stars">★ ★ ★ ★ ★</div>
+        <div class="level-up-rank">PARABÉNS!</div>
+        <div class="level-up-title">VOCÊ AGORA É</div>
+        <div class="level-up-name" style="color:${level.color}">${level.name}</div>
+        <div class="level-up-sub">${level.sub}</div>
+        <button onclick="this.parentElement.parentElement.remove(); sfx.click();">▶ CONTINUAR</button>
+      </div>
+    `;
+    document.body.appendChild(div);
+    requestAnimationFrame(() => div.classList.add('show'));
+    setTimeout(() => {
+      if (div.parentElement) {
+        div.classList.remove('show');
+        setTimeout(() => div.remove(), 500);
+      }
+    }, 7000);
+    document.body.dataset.level = level.id;
+  }
+  function updateLoyaltyDisplay() {
+    const el = document.getElementById('loyalty-badge');
+    if (!el) return;
+    const lvl = getCurrentLevel();
+    el.style.color = lvl.color;
+    el.style.borderColor = lvl.color;
+    el.textContent = `★ ${state.points} pts`;
+    document.body.dataset.level = lvl.id;
+  }
+
+  // 🚪 EASTER EGG: Cinê Privê — secret door in the footer
+  // Opens a black plastic curtain and loads exploitation/cult films from the 70s/80s
+  function enterCinePrive() {
+    sfx.clunk();
+    if (!state.cinePrive) {
+      state.cinePrive = true;
+      showCurtain(() => {
+        // Apply hidden filter: cult/exploitation films from 70s/80s
+        state.filters = {
+          keywords: [
+            { id: 9937, name: 'cult film' },
+            { id: 9663, name: 'b movie' }
+          ],
+          genres: [27, 53], // Horror, Thriller
+          people: [],
+          yearFrom: 1970,
+          yearTo: 1989,
+          ratingMin: null,
+          sortBy: 'popularity.desc'
+        };
+        state.currentPage = 1;
+        switchView('filters');
+        setTimeout(() => {
+          applyFilters();
+          showToast('◢ BEM-VINDO À SALA DOS FUNDOS ◣', 'win');
+          awardPoints(10, 'descobriu o cinê privê');
+        }, 100);
+      });
+    } else {
+      // Already discovered — quick re-entry
+      state.filters = {
+        keywords: [{ id: 9937, name: 'cult film' }, { id: 9663, name: 'b movie' }],
+        genres: [27, 53],
+        people: [],
+        yearFrom: 1970, yearTo: 1989,
+        ratingMin: null,
+        sortBy: 'popularity.desc'
+      };
+      state.currentPage = 1;
+      switchView('filters');
+      setTimeout(() => applyFilters(), 100);
+    }
+  }
+
+  function showCurtain(onComplete) {
+    const curtain = document.createElement('div');
+    curtain.className = 'cine-curtain';
+    curtain.innerHTML = `
+      <div class="curtain-half curtain-left"></div>
+      <div class="curtain-half curtain-right"></div>
+      <div class="curtain-sign">⚠ SOMENTE MAIORES ⚠<br><span class="curtain-sub">cinê privê</span></div>
+    `;
+    document.body.appendChild(curtain);
+    sfx.static(0.4);
+    setTimeout(() => curtain.classList.add('opening'), 50);
+    setTimeout(() => {
+      onComplete();
+      setTimeout(() => {
+        curtain.classList.add('closing');
+        setTimeout(() => curtain.remove(), 600);
+      }, 800);
+    }, 1400);
+  }
+
+  // ============ SFX (Web Audio - sintetizado, sem arquivos) ============
+  const sfx = {
+    ctx: null,
+    enabled: localStorage.getItem('vhs_sfx') !== 'off',
+
+    init() {
+      if (this.ctx) return;
+      try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch { this.enabled = false; }
+    },
+    toggle() {
+      this.enabled = !this.enabled;
+      localStorage.setItem('vhs_sfx', this.enabled ? 'on' : 'off');
+      if (this.enabled) this.click();
+      const btn = document.getElementById('sfx-toggle');
+      if (btn) btn.textContent = this.enabled ? '🔊' : '🔇';
+    },
+    // Clique mecânico curto
+    click() {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(180, t);
+      osc.frequency.exponentialRampToValueAtTime(60, t + 0.04);
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+      osc.connect(gain).connect(this.ctx.destination);
+      osc.start(t); osc.stop(t + 0.06);
+    },
+    // Estática de TV
+    static(dur = 0.18) {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      const bufSize = this.ctx.sampleRate * dur;
+      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+      const src = this.ctx.createBufferSource(); src.buffer = buf;
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      const filt = this.ctx.createBiquadFilter();
+      filt.type = 'highpass'; filt.frequency.value = 1500;
+      src.connect(filt).connect(gain).connect(this.ctx.destination);
+      src.start(t);
+    },
+    // Rebobinar (motor + ruído)
+    rewind() {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime; const dur = 1.4;
+      const osc = this.ctx.createOscillator(); osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(800, t);
+      osc.frequency.linearRampToValueAtTime(1600, t + 0.5);
+      osc.frequency.linearRampToValueAtTime(2200, t + 1.0);
+      osc.frequency.linearRampToValueAtTime(400, t + dur);
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.06, t);
+      gain.gain.setValueAtTime(0.06, t + dur - 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      const lfo = this.ctx.createOscillator();
+      lfo.frequency.value = 25;
+      const lfoGain = this.ctx.createGain();
+      lfoGain.gain.value = 0.03;
+      lfo.connect(lfoGain).connect(gain.gain);
+      osc.connect(gain).connect(this.ctx.destination);
+      osc.start(t); osc.stop(t + dur);
+      lfo.start(t); lfo.stop(t + dur);
+      const bufSize = this.ctx.sampleRate * dur;
+      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+      const noise = this.ctx.createBufferSource(); noise.buffer = buf;
+      const nfilt = this.ctx.createBiquadFilter();
+      nfilt.type = 'bandpass'; nfilt.frequency.value = 3000;
+      const ngain = this.ctx.createGain();
+      ngain.gain.setValueAtTime(0.04, t);
+      ngain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      noise.connect(nfilt).connect(ngain).connect(this.ctx.destination);
+      noise.start(t);
+    },
+    // Clunk mecânico (botão chunky)
+    clunk() {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator(); osc.type = 'triangle';
+      osc.frequency.setValueAtTime(120, t);
+      osc.frequency.exponentialRampToValueAtTime(40, t + 0.12);
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      osc.connect(gain).connect(this.ctx.destination);
+      osc.start(t); osc.stop(t + 0.16);
+    },
+    // Glitch da fita mastigada
+    glitch() {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime; const dur = 0.8;
+      const bufSize = this.ctx.sampleRate * dur;
+      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (Math.random() > 0.8 ? 1 : 0.3);
+      }
+      const src = this.ctx.createBufferSource(); src.buffer = buf;
+      src.playbackRate.setValueAtTime(2, t);
+      src.playbackRate.linearRampToValueAtTime(0.5, t + dur);
+      const filt = this.ctx.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.setValueAtTime(800, t);
+      filt.frequency.linearRampToValueAtTime(200, t + dur);
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      src.connect(filt).connect(gain).connect(this.ctx.destination);
+      src.start(t);
+    },
+    // Acorde de 3 notas (pontos ganhos)
+    chime() {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      [523.25, 659.25, 783.99].forEach((freq, i) => {
+        const osc = this.ctx.createOscillator(); osc.type = 'sine';
+        osc.frequency.value = freq;
+        const gain = this.ctx.createGain();
+        const start = t + i * 0.05;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.15, start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+        osc.connect(gain).connect(this.ctx.destination);
+        osc.start(start); osc.stop(start + 0.5);
+      });
+    },
+    // Inserir fita: clunk mais grave + chiado curto (acoplagem mecânica)
+    insertTape() {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      // Clunk grave (encaixe)
+      const osc = this.ctx.createOscillator(); osc.type = 'triangle';
+      osc.frequency.setValueAtTime(90, t);
+      osc.frequency.exponentialRampToValueAtTime(35, t + 0.18);
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.3, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      osc.connect(gain).connect(this.ctx.destination);
+      osc.start(t); osc.stop(t + 0.24);
+      // Chiado da fita arrastando (delay curto)
+      const dur = 0.4;
+      const bufSize = this.ctx.sampleRate * dur;
+      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+      const noise = this.ctx.createBufferSource(); noise.buffer = buf;
+      const nfilt = this.ctx.createBiquadFilter();
+      nfilt.type = 'bandpass'; nfilt.frequency.value = 2200;
+      const ngain = this.ctx.createGain();
+      ngain.gain.setValueAtTime(0, t + 0.05);
+      ngain.gain.linearRampToValueAtTime(0.04, t + 0.1);
+      ngain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      noise.connect(nfilt).connect(ngain).connect(this.ctx.destination);
+      noise.start(t + 0.05);
+    },
+    // Beep curto (status / play indicator)
+    beep(secs = 0.12) {
+      if (!this.enabled) return; this.init(); if (!this.ctx) return;
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator(); osc.type = 'sine';
+      osc.frequency.value = 880;
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.setValueAtTime(0.08, t + secs - 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + secs);
+      osc.connect(gain).connect(this.ctx.destination);
+      osc.start(t); osc.stop(t + secs);
+    }
+  };
+
+  // ============ INIT ============
+  function init() {
+    if (state.apiKey) tryStartApp();
+    // Configura o seletor de país inicial no trigger
+    const initialOpt = document.querySelector(`.custom-option[data-value="${state.country}"]`);
+    if (initialOpt) {
+      const selectTrigger = document.getElementById('country-select-trigger');
+      const triggerImg = selectTrigger.querySelector('img');
+      const triggerSpan = selectTrigger.querySelector('span');
+      const optImg = initialOpt.querySelector('img');
+      const optSpan = initialOpt.querySelector('span');
+      
+      triggerImg.src = optImg.src;
+      triggerImg.alt = optImg.alt;
+      triggerSpan.textContent = optSpan.textContent;
+    }
+
+    // Lógica de toggle e seleção do dropdown de países
+    const selectContainer = document.getElementById('country-select-container');
+    const selectTrigger = document.getElementById('country-select-trigger');
+    const optionsList = selectContainer.querySelectorAll('.custom-option');
+
+    selectTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectContainer.classList.toggle('open');
+      sfx.click();
+    });
+
+    optionsList.forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const val = opt.getAttribute('data-value');
+        state.country = val;
+        localStorage.setItem('tmdb_country', val);
+        
+        // Atualiza o trigger
+        const triggerImg = selectTrigger.querySelector('img');
+        const triggerSpan = selectTrigger.querySelector('span');
+        const optImg = opt.querySelector('img');
+        const optSpan = opt.querySelector('span');
+        
+        triggerImg.src = optImg.src;
+        triggerImg.alt = optImg.alt;
+        triggerSpan.textContent = optSpan.textContent;
+        
+        selectContainer.classList.remove('open');
+        sfx.clunk();
+        renderView();
+      });
+    });
+
+    document.addEventListener('click', () => {
+      selectContainer.classList.remove('open');
+    });
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doSearch();
+    });
+    document.getElementById('ai-query').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') askOracle();
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => { sfx.static(); switchView(btn.dataset.view); });
+    });
+    // Set sfx button initial state
+    const sfxBtn = document.getElementById('sfx-toggle');
+    if (sfxBtn) sfxBtn.textContent = sfx.enabled ? '🔊' : '🔇';
+    // Show current loyalty level badge
+    updateLoyaltyDisplay();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (document.getElementById('trailer-overlay').classList.contains('show')) {
+          // Esc skips the rewind prompt
+          if (document.getElementById('rewind-prompt')) closeTrailerFull();
+          else closeTrailer();
+        }
+        else if (document.getElementById('witch-overlay').classList.contains('show')) closeWitch();
+        else closeModal();
+      }
+    });
+  }
+
+  async function saveApiKey() {
+    const key = document.getElementById('api-key-input').value.trim();
+    if (!key) { alert('Por favor, cole uma chave válida.'); return; }
+    state.apiKey = key;
+    localStorage.setItem('tmdb_api_key', key);
+    tryStartApp();
+  }
+
+  async function tryStartApp() {
+    document.getElementById('api-setup').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    try {
+      const data = await tmdbFetch('/genre/movie/list');
+      state.genres = data.genres || [];
+      renderView();
+    } catch (err) {
+      document.getElementById('main-content').innerHTML = `
+        <div class="error-msg">
+          ⚠ CHAVE INVÁLIDA OU SEM CONEXÃO ⚠<br><br>
+          ${escapeHtml(err.message)}<br><br>
+          <button onclick="resetApiKey()">VOLTAR E TENTAR DE NOVO</button>
+        </div>`;
+    }
+  }
+
+  function resetApiKey() {
+    localStorage.removeItem('tmdb_api_key');
+    state.apiKey = '';
+    document.getElementById('api-setup').classList.remove('hidden');
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('api-key-input').value = '';
+  }
+
+  // ============ VIEW SWITCHING ============
+  function switchView(view) {
+    state.view = view;
+    state.currentPage = 1;
+    state.currentQuery = null;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    renderView();
+  }
+
+  async function renderView() {
+    const content = document.getElementById('main-content');
+    content.innerHTML = '<div class="loading">Rebobinando fita...</div>';
+    try {
+      if (state.view === 'home') await renderHome();
+      else if (state.view === 'filters') await renderFilters();
+      else if (state.view === 'people') await renderPopularPeople();
+      else if (state.view === 'favorites') renderFavorites();
+      else if (state.view === 'card') renderLoyaltyCard();
+    } catch (err) {
+      content.innerHTML = `<div class="error-msg">⚠ ERRO: ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  // ============ HOME ============
+  async function renderHome() {
+    const [popular, topRated, nowPlaying] = await Promise.all([
+      tmdbFetch('/movie/popular', { page: 1 }),
+      tmdbFetch('/movie/top_rated', { page: 1 }),
+      tmdbFetch('/movie/now_playing', { page: 1 })
+    ]);
+    document.getElementById('main-content').innerHTML = `
+      ${shelfSection('🔥 OS MAIS ALUGADOS', popular.results.slice(0, 12))}
+      ${shelfSection('🆕 LANÇAMENTOS', nowPlaying.results.slice(0, 12))}
+      ${shelfSection('⭐ ESTANTE PREMIUM', topRated.results.slice(0, 12))}
+    `;
+  }
+
+  function shelfSection(title, movies) {
+    return `
+      <div class="section-title">${title}</div>
+      ${shelfWall(movies)}
+    `;
+  }
+
+  // Render a list of movies as a shelf with VHS cards in a grid
+  function shelfWall(movies, opts = {}) {
+    if (!movies || !movies.length) return '<div class="empty-state" style="padding:20px">prateleira vazia...</div>';
+    return `
+      <div class="shelf">
+        <div class="vhs-grid">${movies.map(movieCard).join('')}</div>
+      </div>
+    `;
+  }
+
+  function movieCard(m) {
+    const poster = m.poster_path
+      ? `<img class="vhs-poster" src="${IMG_BASE}${m.poster_path}" alt="${escapeAttr(m.title)}" loading="lazy">`
+      : `<div class="vhs-no-poster">${escapeHtml(m.title || 'SEM CAPA')}</div>`;
+    const year = m.release_date ? m.release_date.slice(0, 4) : '????';
+    const isFav = state.favorites.some(f => f.id === m.id);
+    const title = m.title || m.name || '';
+    return `
+      <div class="vhs-tape" onclick="openMovie(${m.id})">
+        ${isFav ? '<div class="vhs-fav-badge">★</div>' : ''}
+        <div class="label">
+          ${poster}
+          <div class="vhs-title">${escapeHtml(title)}</div>
+          <div class="vhs-year">${year}</div>
+        </div>
+      </div>`;
+  }
+
+  // ============ FILTERS VIEW ============
+  async function renderFilters() {
+    const f = state.filters;
+    document.getElementById('main-content').innerHTML = `
+      <div class="filter-panel">
+        <h2>◢ FILTROS AVANÇADOS ◣</h2>
+        <p style="color:#ddd; font-size:16px; margin-bottom:16px; line-height:1.4;">
+          Combine quantos filtros quiser. O sistema soma tudo (E lógico):<br>
+          <em style="color:var(--neon-yellow)">ex: terror + anos 80 + se passa em hospital</em>
+        </p>
+
+        <div class="filter-row">
+          <div class="filter-label">TEMÁTICA</div>
+          <div class="filter-input">
+            <div class="kw-box">
+              <input type="search" id="kw-search" placeholder="ex: las vegas, road trip, hospital, máfia..." autocomplete="off">
+              <div class="kw-results" id="kw-results"></div>
+            </div>
+            <div class="chips" id="kw-chips">
+              ${f.keywords.length === 0 ? '<span style="color:#666; font-size:14px; padding:0 8px;">nenhuma temática selecionada</span>' : ''}
+              ${f.keywords.map(k => `<span class="chip kw-chip">${escapeHtml(k.name)}<span class="x" onclick="removeKeyword(${k.id})">✕</span></span>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-label">GÊNEROS</div>
+          <div class="genre-checks">
+            ${state.genres.map(g => `
+              <label class="genre-check ${f.genres.includes(g.id) ? 'active' : ''}">
+                <input type="checkbox" value="${g.id}" ${f.genres.includes(g.id) ? 'checked' : ''} onchange="toggleGenre(${g.id})">
+                ${escapeHtml(g.name)}
+              </label>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-label">PESSOA</div>
+          <div class="filter-input">
+            <div class="kw-box">
+              <input type="search" id="person-search" placeholder="ator, atriz, diretor..." autocomplete="off">
+              <div class="kw-results" id="person-results"></div>
+            </div>
+            <div class="chips" id="person-chips">
+              ${f.people.length === 0 ? '<span style="color:#666; font-size:14px; padding:0 8px;">ninguém selecionado</span>' : ''}
+              ${f.people.map(p => `<span class="chip person-chip">${escapeHtml(p.name)}<span class="x" onclick="removePerson(${p.id})">✕</span></span>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-label">ANO</div>
+          <div class="filter-input">
+            <input type="number" id="year-from" placeholder="de" min="1900" max="2030" value="${f.yearFrom || ''}" style="max-width:120px">
+            <span style="color:var(--neon-cyan)">até</span>
+            <input type="number" id="year-to" placeholder="até" min="1900" max="2030" value="${f.yearTo || ''}" style="max-width:120px">
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-label">NOTA MIN</div>
+          <div class="filter-input">
+            <input type="number" id="rating-min" placeholder="0-10" min="0" max="10" step="0.5" value="${f.ratingMin || ''}" style="max-width:120px">
+            <span style="color:#999; font-size:14px">★ (média do TMDB)</span>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-label">ORDENAR</div>
+          <div class="filter-input">
+            <select id="sort-by">
+              <option value="popularity.desc" ${f.sortBy==='popularity.desc'?'selected':''}>Mais populares</option>
+              <option value="vote_average.desc" ${f.sortBy==='vote_average.desc'?'selected':''}>Melhor avaliados</option>
+              <option value="primary_release_date.desc" ${f.sortBy==='primary_release_date.desc'?'selected':''}>Mais recentes</option>
+              <option value="primary_release_date.asc" ${f.sortBy==='primary_release_date.asc'?'selected':''}>Mais antigos</option>
+              <option value="revenue.desc" ${f.sortBy==='revenue.desc'?'selected':''}>Maior bilheteria</option>
+              <option value="title.asc" ${f.sortBy==='title.asc'?'selected':''}>Título A→Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="preset-row">
+          <strong>SUGESTÕES:</strong>
+          <button class="preset-btn" onclick="applyPreset('roadVegas')">filme na estrada + Las Vegas + crime</button>
+          <button class="preset-btn" onclick="applyPreset('horror80')">terror anos 80</button>
+          <button class="preset-btn" onclick="applyPreset('noirNY')">noir em Nova York</button>
+          <button class="preset-btn" onclick="applyPreset('heist')">filme de assalto</button>
+          <button class="preset-btn" onclick="applyPreset('spaceTravel')">ficção no espaço</button>
+          <button class="preset-btn" onclick="applyPreset('hospital')">hospital + suspense</button>
+          <button class="preset-btn" onclick="applyPreset('timeloop')">loop temporal</button>
+          <button class="preset-btn" onclick="applyPreset('serialKiller')">serial killer + thriller</button>
+        </div>
+
+        <div class="filter-actions">
+          <button onclick="applyFilters()">▶ APLICAR FILTROS</button>
+          <button class="secondary" onclick="clearFilters()">✕ LIMPAR TUDO</button>
+        </div>
+      </div>
+
+      <div id="filter-results"></div>
+    `;
+
+    // Wire keyword autocomplete
+    const kwInput = document.getElementById('kw-search');
+    const kwResults = document.getElementById('kw-results');
+    let kwTimer;
+    kwInput.addEventListener('input', () => {
+      clearTimeout(kwTimer);
+      const q = kwInput.value.trim();
+      if (!q) { kwResults.classList.remove('show'); return; }
+      kwTimer = setTimeout(async () => {
+        try {
+          const data = await tmdbFetch('/search/keyword', { query: q });
+          kwResults.innerHTML = (data.results || []).slice(0, 10)
+            .map(k => `<div class="kw-item" onclick="addKeyword(${k.id}, '${escapeAttr(k.name)}')">${escapeHtml(k.name)}</div>`)
+            .join('') || '<div class="kw-item" style="color:#666; cursor:default">nada encontrado</div>';
+          kwResults.classList.add('show');
+        } catch (e) { console.error(e); }
+      }, 300);
+    });
+    kwInput.addEventListener('blur', () => setTimeout(() => kwResults.classList.remove('show'), 200));
+    kwInput.addEventListener('focus', () => { if (kwInput.value.trim()) kwResults.classList.add('show'); });
+
+    // Wire person autocomplete
+    const personInput = document.getElementById('person-search');
+    const personResults = document.getElementById('person-results');
+    let personTimer;
+    personInput.addEventListener('input', () => {
+      clearTimeout(personTimer);
+      const q = personInput.value.trim();
+      if (!q) { personResults.classList.remove('show'); return; }
+      personTimer = setTimeout(async () => {
+        try {
+          const data = await tmdbFetch('/search/person', { query: q });
+          personResults.innerHTML = (data.results || []).slice(0, 10)
+            .map(p => `<div class="kw-item" onclick="addPerson(${p.id}, '${escapeAttr(p.name)}')">${escapeHtml(p.name)} <span style="color:#666; font-size:13px">${escapeHtml(p.known_for_department || '')}</span></div>`)
+            .join('') || '<div class="kw-item" style="color:#666; cursor:default">nada encontrado</div>';
+          personResults.classList.add('show');
+        } catch (e) { console.error(e); }
+      }, 300);
+    });
+    personInput.addEventListener('blur', () => setTimeout(() => personResults.classList.remove('show'), 200));
+    personInput.addEventListener('focus', () => { if (personInput.value.trim()) personResults.classList.add('show'); });
+
+    // If filters already have values from a previous session, run them
+    if (hasActiveFilters()) {
+      await applyFilters();
+    }
+  }
+
+  function hasActiveFilters() {
+    const f = state.filters;
+    return f.keywords.length || f.genres.length || f.people.length || f.yearFrom || f.yearTo || f.ratingMin;
+  }
+
+  // ============ FILTER MUTATIONS ============
+  function addKeyword(id, name) {
+    if (!state.filters.keywords.some(k => k.id === id)) {
+      state.filters.keywords.push({ id, name });
+    }
+    document.getElementById('kw-search').value = '';
+    document.getElementById('kw-results').classList.remove('show');
+    refreshFilterUI();
+  }
+  function removeKeyword(id) {
+    state.filters.keywords = state.filters.keywords.filter(k => k.id !== id);
+    refreshFilterUI();
+  }
+  function addPerson(id, name) {
+    if (!state.filters.people.some(p => p.id === id)) {
+      state.filters.people.push({ id, name });
+    }
+    document.getElementById('person-search').value = '';
+    document.getElementById('person-results').classList.remove('show');
+    refreshFilterUI();
+  }
+  function removePerson(id) {
+    state.filters.people = state.filters.people.filter(p => p.id !== id);
+    refreshFilterUI();
+  }
+  function toggleGenre(id) {
+    const idx = state.filters.genres.indexOf(id);
+    if (idx >= 0) state.filters.genres.splice(idx, 1);
+    else state.filters.genres.push(id);
+    refreshFilterUI();
+  }
+
+  function refreshFilterUI() {
+    const f = state.filters;
+    // Chips for keywords
+    const kwChips = document.getElementById('kw-chips');
+    if (kwChips) {
+      kwChips.innerHTML = f.keywords.length === 0
+        ? '<span style="color:#666; font-size:14px; padding:0 8px;">nenhuma temática selecionada</span>'
+        : f.keywords.map(k => `<span class="chip kw-chip">${escapeHtml(k.name)}<span class="x" onclick="removeKeyword(${k.id})">✕</span></span>`).join('');
+    }
+    // Chips for people
+    const personChips = document.getElementById('person-chips');
+    if (personChips) {
+      personChips.innerHTML = f.people.length === 0
+        ? '<span style="color:#666; font-size:14px; padding:0 8px;">ninguém selecionado</span>'
+        : f.people.map(p => `<span class="chip person-chip">${escapeHtml(p.name)}<span class="x" onclick="removePerson(${p.id})">✕</span></span>`).join('');
+    }
+    // Genre checks
+    document.querySelectorAll('.genre-check').forEach(label => {
+      const cb = label.querySelector('input');
+      const isActive = f.genres.includes(parseInt(cb.value));
+      label.classList.toggle('active', isActive);
+      cb.checked = isActive;
+    });
+  }
+
+  function clearFilters() {
+    state.filters = {
+      keywords: [], genres: [], people: [],
+      yearFrom: null, yearTo: null, ratingMin: null,
+      sortBy: 'popularity.desc'
+    };
+    state.currentPage = 1;
+    state.currentQuery = null;
+    renderFilters();
+  }
+
+  // ============ PRESETS ============
+  // Each preset = list of TMDB keyword IDs (real) + genre IDs
+  // I verified these against TMDB's keyword/genre system
+  const PRESETS = {
+    roadVegas: {
+      keywords: [{id:9663, name:'road trip'}, {id:6075, name:'las vegas, nevada'}],
+      genres: [80] // Crime
+    },
+    horror80: {
+      keywords: [],
+      genres: [27], // Horror
+      yearFrom: 1980, yearTo: 1989
+    },
+    noirNY: {
+      keywords: [{id:212, name:'new york city'}, {id:9826, name:'film noir'}]
+    },
+    heist: {
+      keywords: [{id:10051, name:'heist'}],
+      genres: [80] // Crime
+    },
+    spaceTravel: {
+      keywords: [{id:6078, name:'space travel'}, {id:9882, name:'space'}],
+      genres: [878] // Sci-Fi
+    },
+    hospital: {
+      keywords: [{id:1556, name:'hospital'}],
+      genres: [53] // Thriller
+    },
+    timeloop: {
+      keywords: [{id:189402, name:'time loop'}]
+    },
+    serialKiller: {
+      keywords: [{id:10714, name:'serial killer'}],
+      genres: [53] // Thriller
+    }
+  };
+
+  function applyPreset(name) {
+    const p = PRESETS[name];
+    if (!p) return;
+    state.filters.keywords = p.keywords ? [...p.keywords] : [];
+    state.filters.genres = p.genres ? [...p.genres] : [];
+    state.filters.people = [];
+    state.filters.yearFrom = p.yearFrom || null;
+    state.filters.yearTo = p.yearTo || null;
+    state.filters.ratingMin = null;
+    state.currentPage = 1;
+    renderFilters();
+  }
+
+  // ============ APPLY FILTERS — runs the actual /discover query ============
+  async function applyFilters() {
+    // Read numeric inputs if present
+    const yearFromEl = document.getElementById('year-from');
+    const yearToEl = document.getElementById('year-to');
+    const ratingEl = document.getElementById('rating-min');
+    const sortEl = document.getElementById('sort-by');
+    if (yearFromEl) state.filters.yearFrom = yearFromEl.value ? parseInt(yearFromEl.value) : null;
+    if (yearToEl) state.filters.yearTo = yearToEl.value ? parseInt(yearToEl.value) : null;
+    if (ratingEl) state.filters.ratingMin = ratingEl.value ? parseFloat(ratingEl.value) : null;
+    if (sortEl) state.filters.sortBy = sortEl.value;
+
+    state.currentQuery = { type: 'filter' };
+    await loadFilteredResults();
+  }
+
+  async function loadFilteredResults() {
+    const resultsContainer = document.getElementById('filter-results') || document.getElementById('main-content');
+    resultsContainer.innerHTML = '<div class="loading">Buscando nas prateleiras...</div>';
+
+    const f = state.filters;
+    const params = { page: state.currentPage, sort_by: f.sortBy, include_adult: 'false' };
+
+    if (f.keywords.length) params.with_keywords = f.keywords.map(k => k.id).join(',');
+    if (f.genres.length) params.with_genres = f.genres.join(',');
+    if (f.people.length) params.with_people = f.people.map(p => p.id).join(',');
+    if (f.yearFrom) params['primary_release_date.gte'] = `${f.yearFrom}-01-01`;
+    if (f.yearTo) params['primary_release_date.lte'] = `${f.yearTo}-12-31`;
+    if (f.ratingMin) {
+      params['vote_average.gte'] = f.ratingMin;
+      params['vote_count.gte'] = 50; // avoid obscure 10/10 movies with 2 votes
+    }
+
+    try {
+      const data = await tmdbFetch('/discover/movie', params);
+      const totalPages = Math.min(data.total_pages, 500);
+      const summary = buildFilterSummary();
+
+      resultsContainer.innerHTML = `
+        <div class="results-count">
+          ${data.total_results.toLocaleString('pt-BR')} filmes encontrados ${summary ? '— ' + summary : ''}
+        </div>
+        ${data.results.length === 0 ? `
+          <div class="empty-state">
+            <div class="big">PRATELEIRA VAZIA</div>
+            Nenhum filme bate com esses filtros. Tenta afrouxar um pouco!
+          </div>
+        ` : `
+          ${shelfWall(data.results, { moviesPerRow: 14 })}
+          ${paginationControls(data.page, totalPages)}
+        `}
+      `;
+    } catch (err) {
+      resultsContainer.innerHTML = `<div class="error-msg">⚠ ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function buildFilterSummary() {
+    const f = state.filters;
+    const parts = [];
+    if (f.keywords.length) parts.push(f.keywords.map(k => k.name).join(' + '));
+    if (f.genres.length) {
+      const names = f.genres.map(id => state.genres.find(g => g.id === id)?.name).filter(Boolean);
+      if (names.length) parts.push(names.join(' + '));
+    }
+    if (f.people.length) parts.push('com ' + f.people.map(p => p.name).join(' + '));
+    if (f.yearFrom || f.yearTo) {
+      const from = f.yearFrom || '?';
+      const to = f.yearTo || '?';
+      parts.push(`${from}–${to}`);
+    }
+    if (f.ratingMin) parts.push(`nota ≥ ${f.ratingMin}`);
+    return parts.join(', ');
+  }
+
+  function paginationControls(page, totalPages) {
+    return `
+      <div class="pagination">
+        <button onclick="changePage(${page - 1})" ${page <= 1 ? 'disabled' : ''}>◀ ANTERIOR</button>
+        <span class="page-info">PÁG ${page} / ${totalPages}</span>
+        <button onclick="changePage(${page + 1})" ${page >= totalPages ? 'disabled' : ''}>PRÓXIMA ▶</button>
+      </div>`;
+  }
+
+  function changePage(p) {
+    state.currentPage = p;
+    if (state.currentQuery?.type === 'filter') loadFilteredResults();
+    else if (state.currentQuery?.type === 'search') doSearch();
+    else if (state.currentQuery?.type === 'person') openPerson(state.currentQuery.id);
+    else if (state.view === 'people') renderPopularPeople();
+    window.scrollTo(0, 0);
+  }
+
+  // ============ POPULAR PEOPLE ============
+  async function renderPopularPeople() {
+    const data = await tmdbFetch('/person/popular', { page: state.currentPage });
+    document.getElementById('main-content').innerHTML = `
+      <div class="section-title">🎬 ATORES & DIRETORES</div>
+      <div class="person-grid">${data.results.map(personCard).join('')}</div>
+      ${paginationControls(data.page, Math.min(data.total_pages, 500))}
+    `;
+  }
+
+  function personCard(p) {
+    const img = p.profile_path
+      ? `<img src="${IMG_BASE}${p.profile_path}" alt="${escapeAttr(p.name)}" loading="lazy">`
+      : `<div class="vhs-no-poster">${escapeHtml(p.name)}</div>`;
+    const known = (p.known_for_department || '')
+      .replace('Acting','Atuação').replace('Directing','Direção').replace('Writing','Roteiro');
+    return `
+      <div class="person-card" onclick="openPerson(${p.id})">
+        ${img}
+        <div class="name">${escapeHtml(p.name)}</div>
+        <div class="known">${escapeHtml(known)}</div>
+      </div>`;
+  }
+
+  async function openPerson(personId) {
+    state.currentQuery = { type: 'person', id: personId };
+    const content = document.getElementById('main-content');
+    content.innerHTML = '<div class="loading">Buscando filmografia...</div>';
+    try {
+      const [person, credits] = await Promise.all([
+        tmdbFetch(`/person/${personId}`),
+        tmdbFetch(`/person/${personId}/movie_credits`)
+      ]);
+      const seen = new Set();
+      const all = [];
+      [...(credits.cast || []), ...(credits.crew || [])].forEach(c => {
+        if (!seen.has(c.id) && c.release_date) {
+          seen.add(c.id);
+          all.push(c);
+        }
+      });
+      all.sort((a, b) => (b.release_date || '').localeCompare(a.release_date || ''));
+
+      content.innerHTML = `
+        <div class="breadcrumb">
+          <button class="back-btn" onclick="state.currentPage=1; switchView('people')">◀ VOLTAR</button>
+          Filmografia: <strong>${escapeHtml(person.name)}</strong>
+          ${person.known_for_department ? `<span style="color:#999"> — ${escapeHtml(person.known_for_department)}</span>` : ''}
+          <button class="tiny" style="margin-left:10px" onclick="addPersonToFilters(${person.id}, '${escapeAttr(person.name)}')">+ ADD AOS FILTROS</button>
+        </div>
+        ${shelfWall(all, { moviesPerRow: 14 })}`;
+    } catch (err) {
+      content.innerHTML = `<div class="error-msg">⚠ ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function addPersonToFilters(id, name) {
+    if (!state.filters.people.some(p => p.id === id)) {
+      state.filters.people.push({ id, name });
+    }
+    switchView('filters');
+  }
+
+  // ============ FREE SEARCH ============
+  async function doSearch() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    if (state.currentQuery?.type !== 'search' || state.currentQuery?.q !== q) {
+      state.currentPage = 1;
+    }
+    state.currentQuery = { type: 'search', q };
+    const content = document.getElementById('main-content');
+    content.innerHTML = '<div class="loading">Procurando nas prateleiras...</div>';
+    try {
+      const data = await tmdbFetch('/search/multi', { query: q, page: state.currentPage });
+      const movies = data.results.filter(r => r.media_type === 'movie');
+      const people = data.results.filter(r => r.media_type === 'person');
+
+      let html = `
+        <div class="breadcrumb">
+          <button class="back-btn" onclick="state.currentPage=1; switchView('home')">◀ INÍCIO</button>
+          Resultados para: <strong>"${escapeHtml(q)}"</strong>
+        </div>`;
+      if (people.length) {
+        html += `<div class="section-title">PESSOAS</div>
+          <div class="person-grid">${people.slice(0, 6).map(personCard).join('')}</div>`;
+      }
+      if (movies.length) {
+        html += `<div class="section-title">FILMES</div>
+          ${shelfWall(movies, { moviesPerRow: 14 })}
+          ${paginationControls(data.page, Math.min(data.total_pages, 500))}`;
+      }
+      if (!movies.length && !people.length) {
+        html += `<div class="empty-state"><div class="big">SEM RESULTADOS</div>Nada na fita. Tenta outra busca!</div>`;
+      }
+      content.innerHTML = html;
+    } catch (err) {
+      content.innerHTML = `<div class="error-msg">⚠ ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  // ============ FAVORITES ============
+  function renderFavorites() {
+    const content = document.getElementById('main-content');
+    if (!state.favorites.length) {
+      content.innerHTML = `
+        <div class="section-title">★ MINHA ESTANTE</div>
+        <div class="empty-state">
+          <div class="big">ESTANTE VAZIA</div>
+          Adicione filmes à sua estante clicando em qualquer fita e depois em "ADICIONAR À ESTANTE".
+        </div>`;
+      return;
+    }
+    content.innerHTML = `
+      <div class="section-title">★ MINHA ESTANTE (${state.favorites.length})</div>
+      ${shelfWall(state.favorites, { moviesPerRow: 14 })}
+
+      <div class="return-box" id="return-box"
+           ondragover="handleReturnDragOver(event)"
+           ondragleave="handleReturnDragLeave(event)"
+           ondrop="handleReturnDrop(event)">
+        <div class="return-box-label">▼ DEVOLUÇÃO 24h ▼</div>
+        <div class="return-box-slot"></div>
+        <div class="return-box-hint">
+          arraste uma fita aqui pra <kbd>devolver</kbd>
+        </div>
+      </div>
+    `;
+
+    // Wire up drag handlers on each VHS card in favorites
+    content.querySelectorAll('.vhs-tape').forEach(tape => {
+      tape.setAttribute('draggable', 'true');
+      tape.addEventListener('dragstart', handleTapeDragStart);
+      tape.addEventListener('dragend', handleTapeDragEnd);
+    });
+  }
+
+  // ============ RETURN BOX (drag-drop to remove from favorites) ============
+  let draggedTapeId = null;
+
+  function handleTapeDragStart(e) {
+    const card = e.currentTarget;
+    // The card has onclick="openMovie(123)" — extract the ID
+    const onclickAttr = card.getAttribute('onclick') || '';
+    const match = onclickAttr.match(/openMovie\((\d+)\)/);
+    if (!match) return;
+    draggedTapeId = parseInt(match[1], 10);
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    // Required for Firefox
+    e.dataTransfer.setData('text/plain', String(draggedTapeId));
+    sfx.click();
+  }
+
+  function handleTapeDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+  }
+
+  function handleReturnDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.getElementById('return-box').classList.add('drag-over');
+  }
+
+  function handleReturnDragLeave(e) {
+    // Only remove highlight when leaving the box itself (not its children)
+    if (e.currentTarget === e.target) {
+      document.getElementById('return-box').classList.remove('drag-over');
+    }
+  }
+
+  function handleReturnDrop(e) {
+    e.preventDefault();
+    const box = document.getElementById('return-box');
+    box.classList.remove('drag-over');
+    if (!draggedTapeId) return;
+    const tapeId = draggedTapeId;
+    draggedTapeId = null;
+
+    // Find the card to animate "falling in"
+    const card = document.querySelector(`.vhs-tape[onclick*="openMovie(${tapeId})"]`);
+    if (card) {
+      card.classList.add('falling-in-box');
+      sfx.clunk();
+    }
+    setTimeout(() => {
+      // Actually remove from favorites
+      const idx = state.favorites.findIndex(f => f.id === tapeId);
+      if (idx >= 0) {
+        const movie = state.favorites[idx];
+        state.favorites.splice(idx, 1);
+        localStorage.setItem('vhs_favorites', JSON.stringify(state.favorites));
+        showToast(`📼 "${movie.title}" devolvida`, 'info');
+        renderFavorites();
+      }
+    }, 600);
+  }
+
+  // ============ LOYALTY CARD VIEW ============
+  function renderLoyaltyCard() {
+    const lvl = getCurrentLevel();
+    const next = getNextLevel();
+    const content = document.getElementById('main-content');
+    const memberSince = localStorage.getItem('vhs_member_since') || (() => {
+      const d = new Date().toISOString().slice(0, 10);
+      localStorage.setItem('vhs_member_since', d);
+      return d;
+    })();
+    const memberId = localStorage.getItem('vhs_member_id') || (() => {
+      const id = String(Math.floor(Math.random() * 900000) + 100000);
+      localStorage.setItem('vhs_member_id', id);
+      return id;
+    })();
+    const progress = next ? Math.min(100, Math.round(((state.points - lvl.threshold) / (next.threshold - lvl.threshold)) * 100)) : 100;
+    const pointsToNext = next ? (next.threshold - state.points) : 0;
+
+    content.innerHTML = `
+      <div class="section-title">★ MEU CARTÃO DE FIDELIDADE ★</div>
+
+      <div class="loyalty-card-container">
+        <div class="loyalty-card" data-level="${lvl.id}" style="--card-color: ${lvl.color}">
+          <div class="loyalty-card-shine"></div>
+          <div class="loyalty-card-header">
+            <div class="loyalty-card-logo">
+              <span class="logo-vhs">VHS</span> RENTAL
+            </div>
+            <div class="loyalty-card-chip"></div>
+          </div>
+          <div class="loyalty-card-rank">${lvl.name}</div>
+          <div class="loyalty-card-sub">${lvl.sub}</div>
+          <div class="loyalty-card-id">
+            <div class="loyalty-card-field">
+              <div class="field-label">SÓCIO Nº</div>
+              <div class="field-value">${memberId}</div>
+            </div>
+            <div class="loyalty-card-field">
+              <div class="field-label">DESDE</div>
+              <div class="field-value">${memberSince}</div>
+            </div>
+          </div>
+          <div class="loyalty-card-stripe"></div>
+        </div>
+      </div>
+
+      <div class="loyalty-stats">
+        <div class="loyalty-stat">
+          <div class="stat-value" style="color:${lvl.color}">${state.points}</div>
+          <div class="stat-label">PONTOS</div>
+        </div>
+        <div class="loyalty-stat">
+          <div class="stat-value" style="color:var(--neon-pink)">R$ ${state.fines.toFixed(2)}</div>
+          <div class="stat-label">MULTAS</div>
+        </div>
+        <div class="loyalty-stat">
+          <div class="stat-value" style="color:var(--neon-cyan)">${state.favorites.length}</div>
+          <div class="stat-label">NA ESTANTE</div>
+        </div>
+      </div>
+
+      ${next ? `
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>Faltam <strong style="color:${next.color}">${pointsToNext} pontos</strong> para</span>
+            <span style="color:${next.color}; font-family:'Press Start 2P', monospace; font-size:11px;">${next.name}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${progress}%; background:${next.color}"></div>
+          </div>
+        </div>
+      ` : `
+        <div class="progress-section" style="text-align:center; padding:18px;">
+          <div style="font-family:'Press Start 2P', monospace; font-size:12px; color:var(--neon-yellow); animation: neon-pulse 1.5s infinite;">★ NÍVEL MÁXIMO ATINGIDO ★</div>
+        </div>
+      `}
+
+      <div class="levels-list">
+        <h3>★ TODOS OS NÍVEIS ★</h3>
+        ${LEVELS.map(l => `
+          <div class="level-row ${state.points >= l.threshold ? 'achieved' : ''} ${l.id === lvl.id ? 'current' : ''}" style="--row-color:${l.color}">
+            <span class="level-row-icon">${state.points >= l.threshold ? '✓' : '◌'}</span>
+            <span class="level-row-name">${l.name}</span>
+            <span class="level-row-threshold">${l.threshold} pts</span>
+            <span class="level-row-sub">${l.sub}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="how-to-earn">
+        <h3>★ COMO GANHAR PONTOS ★</h3>
+        <div class="earn-grid">
+          <div class="earn-item"><span class="earn-pts">+3</span> adicionar fita à estante</div>
+          <div class="earn-item"><span class="earn-pts">+5</span> rebobinar a fita após o trailer</div>
+          <div class="earn-item"><span class="earn-pts">+2</span> consultar a Madame VHS</div>
+          <div class="earn-item"><span class="earn-pts">+2</span> limpar cabeçote de fita mastigada</div>
+          <div class="earn-item"><span class="earn-pts">+10</span> descobrir easter eggs</div>
+          <div class="earn-item fine-item"><span class="earn-pts">-R$1</span> não rebobinar (multa)</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:24px;">
+        <button class="secondary" onclick="resetLoyalty()" style="font-size:9px; padding:6px 10px;">⚠ ZERAR CADASTRO ⚠</button>
+      </div>
+    `;
+  }
+
+  function resetLoyalty() {
+    if (!confirm('Tem certeza? Vai zerar pontos, multas e cadastro de fidelidade.')) return;
+    state.points = 0;
+    state.fines = 0;
+    localStorage.removeItem('vhs_points');
+    localStorage.removeItem('vhs_fines');
+    localStorage.removeItem('vhs_member_since');
+    localStorage.removeItem('vhs_member_id');
+    delete document.body.dataset.level;
+    updateLoyaltyDisplay();
+    renderLoyaltyCard();
+  }
+
+  function toggleFavorite(movie) {
+    const idx = state.favorites.findIndex(f => f.id === movie.id);
+    if (idx >= 0) {
+      state.favorites.splice(idx, 1);
+      sfx.click();
+    } else {
+      state.favorites.push({
+        id: movie.id, title: movie.title,
+        poster_path: movie.poster_path, release_date: movie.release_date
+      });
+      awardPoints(3, 'fita adicionada à estante');
+    }
+    localStorage.setItem('vhs_favorites', JSON.stringify(state.favorites));
+    if (document.getElementById('modal-overlay').classList.contains('show')) openMovie(movie.id);
+    if (state.view === 'favorites') renderFavorites();
+  }
+
+  // ============ TRAILERS ============
+  // Try localized videos first; if empty, fall back to English
+  async function fetchTrailers(movieId) {
+    try {
+      const localized = await tmdbFetch(`/movie/${movieId}/videos`);
+      if (localized.results && localized.results.length) return localized.results;
+      // Fallback to English — for non-English regions, many movies only have EN trailers
+      const parts = state.country.split('-');
+      const language = parts.slice(1).join('-');
+      if (language !== 'en-US') {
+        const en = await tmdbFetchRaw(`/movie/${movieId}/videos`, { language: 'en-US' });
+        return en.results || [];
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  }
+
+  // tmdbFetch but lets us override language without touching country state
+  async function tmdbFetchRaw(path, overrideParams = {}) {
+    const parts = state.country.split('-');
+    const region = parts[0];
+    const language = parts.slice(1).join('-');
+    const params = new URLSearchParams({ language, region, ...overrideParams });
+    const headers = { 'Content-Type': 'application/json' };
+    let url;
+    if (isV4Token(state.apiKey)) {
+      headers['Authorization'] = `Bearer ${state.apiKey}`;
+      url = `${TMDB_BASE}${path}?${params}`;
+    } else {
+      params.set('api_key', state.apiKey);
+      url = `${TMDB_BASE}${path}?${params}`;
+    }
+    const res = await fetch(url, { headers });
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    return res.json();
+  }
+
+  // tmdbFetch for endpoints that don't accept language/region params (e.g. /watch/providers)
+  async function tmdbFetchNoLang(path) {
+    const headers = { 'Content-Type': 'application/json' };
+    let url;
+    if (isV4Token(state.apiKey)) {
+      headers['Authorization'] = `Bearer ${state.apiKey}`;
+      url = `${TMDB_BASE}${path}`;
+    } else {
+      url = `${TMDB_BASE}${path}?api_key=${encodeURIComponent(state.apiKey)}`;
+    }
+    const res = await fetch(url, { headers });
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    return res.json();
+  }
+
+  // Pick the best trailer from a list of videos
+  function pickBestTrailer(videos) {
+    if (!videos || !videos.length) return null;
+    // Filter only YouTube videos (TMDB also has Vimeo but YT embeds are universal)
+    const yt = videos.filter(v => v.site === 'YouTube' && v.key);
+    if (!yt.length) return null;
+    // Priority: official Trailer > Trailer > official Teaser > Teaser > anything official > first
+    const scored = yt.map(v => {
+      let score = 0;
+      if (v.type === 'Trailer') score += 100;
+      else if (v.type === 'Teaser') score += 50;
+      else if (v.type === 'Clip') score += 10;
+      if (v.official) score += 20;
+      // Prefer recent (TMDB returns published_at)
+      if (v.published_at) score += 1;
+      return { v, score };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0].v;
+  }
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  function saveTapePositions() {
+    localStorage.setItem('vhs_tape_positions', JSON.stringify(state.tapePositions));
+  }
+
+  function initYouTubePlayer(youtubeKey, startSeconds) {
+    if (window.YT && window.YT.Player) {
+      state.ytPlayer = new YT.Player('yt-player-container', {
+        videoId: youtubeKey,
+        playerVars: {
+          'autoplay': 1,
+          'rel': 0,
+          'start': Math.floor(startSeconds)
+        }
+      });
+    } else {
+      document.getElementById('yt-player-container').outerHTML = `
+        <iframe
+          src="https://www.youtube.com/embed/${encodeURIComponent(youtubeKey)}?autoplay=1&rel=0&start=${Math.floor(startSeconds)}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      `;
+    }
+  }
+
+  function playTrailer(youtubeKey, movieId) {
+    sfx.insertTape();
+    const overlay = document.getElementById('trailer-overlay');
+    const playerContainer = document.getElementById('trailer-player');
+    const title = state.trailerTitles[movieId] || 'Trailer';
+    
+    state.currentTrailerId = movieId;
+    state.currentTrailerKey = youtubeKey;
+    state.ytPlayer = null;
+    state.currentTrailerTime = 0;
+    
+    let savedTime = state.tapePositions[movieId] || 0;
+    
+    if (savedTime > 0) {
+      playerContainer.innerHTML = `
+        <button class="trailer-close" onclick="closeTrailerFull()" aria-label="Fechar">×</button>
+        <div class="trailer-title">▶ ${escapeHtml(title)}</div>
+        <div class="unrewound-prompt">
+          <div class="unrewound-marquee">⚠ ATENÇÃO: FITA NÃO REBOBINADA ⚠</div>
+          <p>Esta fita parou em <span style="color:var(--neon-pink)">${formatTime(savedTime)}</span>.</p>
+          <div class="unrewound-actions">
+            <button class="rewind-btn" onclick="startTrailerRewound()">◀◀ REBOBINAR (00:00)</button>
+            <button class="rewind-skip" onclick="startTrailerContinued()">▶ CONTINUAR</button>
+          </div>
+        </div>
+      `;
+      overlay.classList.add('show');
+    } else {
+      renderTrailerPlayer(youtubeKey, title, 0);
+      overlay.classList.add('show');
+    }
+  }
+
+  function renderTrailerPlayer(youtubeKey, title, startSeconds) {
+    sfx.beep(1.5);
+    const playerContainer = document.getElementById('trailer-player');
+    const displayTime = `00:${formatTime(startSeconds || 0)}`;
+    playerContainer.innerHTML = `
+      <button class="trailer-close" onclick="closeTrailer()" aria-label="Fechar">×</button>
+      <div class="trailer-title">▶ ${escapeHtml(title)}</div>
+      <div class="trailer-frame-wrap">
+        <div id="yt-player-container"></div>
+        <div class="vhs-loading-overlay" id="vhs-loading-overlay">
+          <div class="chewed-glitch-bars"></div>
+          <div class="vhs-tracking-line"></div>
+          <div class="vhs-play-indicator">PLAY ▶</div>
+          <div class="vhs-time-counter">${displayTime}</div>
+        </div>
+      </div>
+    `;
+    initYouTubePlayer(youtubeKey, startSeconds);
+
+    // Esconde a tela de transição de barras coloridas com fade out após 1.6 segundos
+    setTimeout(() => {
+      const overlay = document.getElementById('vhs-loading-overlay');
+      if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 500);
+      }
+    }, 1600);
+  }
+
+  function startTrailerRewound() {
+    sfx.rewind();
+    delete state.tapePositions[state.currentTrailerId];
+    saveTapePositions();
+    const title = state.trailerTitles[state.currentTrailerId] || 'Trailer';
+    renderTrailerPlayer(state.currentTrailerKey, title, 0);
+  }
+
+  function startTrailerContinued() {
+    sfx.clunk();
+    const title = state.trailerTitles[state.currentTrailerId] || 'Trailer';
+    const savedTime = state.tapePositions[state.currentTrailerId] || 0;
+    renderTrailerPlayer(state.currentTrailerKey, title, savedTime);
+  }
+
+  function closeTrailer() {
+    const overlay = document.getElementById('trailer-overlay');
+    const player = document.getElementById('trailer-player');
+    
+    state.currentTrailerTime = 0;
+    if (state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
+      try {
+        state.currentTrailerTime = state.ytPlayer.getCurrentTime();
+      } catch(e) {}
+    }
+    
+    // Stop playback immediately
+    player.innerHTML = `
+      <div class="rewind-prompt" id="rewind-prompt">
+        <div class="rewind-marquee">⚠ POR FAVOR, REBOBINE A FITA PARA O PRÓXIMO CLIENTE ⚠</div>
+        <div class="rewind-cassette">
+          <div class="cassette-reels">
+            <div class="reel reel-left"></div>
+            <div class="reel reel-right"></div>
+          </div>
+          <div class="cassette-label">VHS-${Math.floor(Math.random() * 9000 + 1000)}</div>
+        </div>
+        <div class="rewind-actions">
+          <button class="rewind-btn" onclick="doRewind()">◀◀ REBOBINAR</button>
+          <button class="rewind-skip" onclick="skipRewind()">deixar assim e pagar multa</button>
+        </div>
+        <div class="rewind-fineprint">multa: R$ 1,00 por fita não rebobinada</div>
+      </div>
+    `;
+    // Auto-skip after 8 seconds if user just walks away
+    state.rewindTimer = setTimeout(() => {
+      if (document.getElementById('rewind-prompt')) skipRewind();
+    }, 8000);
+  }
+
+  // The actual rewind animation + reward
+  function doRewind() {
+    if (state.rewindTimer) clearTimeout(state.rewindTimer);
+    sfx.rewind();
+    const prompt = document.getElementById('rewind-prompt');
+    if (!prompt) { closeTrailerFull(); return; }
+    prompt.classList.add('rewinding');
+    
+    if (state.currentTrailerId) {
+      delete state.tapePositions[state.currentTrailerId];
+      saveTapePositions();
+    }
+    
+    // Award points
+    awardPoints(5, 'rebobinou a fita');
+    setTimeout(() => {
+      closeTrailerFull();
+    }, 1500);
+  }
+
+  function skipRewind() {
+    if (state.rewindTimer) clearTimeout(state.rewindTimer);
+    // Cliente Ouro+ é isento de multa por fita não rebobinada
+    const lvl = getCurrentLevel();
+    if (['gold', 'director', 'vip'].includes(lvl.id)) {
+      showToast('★ Cliente ' + (lvl.id === 'gold' ? 'Ouro' : lvl.name) + ' — multa perdoada', 'win');
+    } else {
+      addFine(1, 'fita não rebobinada');
+    }
+    
+    if (state.currentTrailerTime > 0 && state.currentTrailerId) {
+      state.tapePositions[state.currentTrailerId] = state.currentTrailerTime;
+      saveTapePositions();
+    }
+    
+    closeTrailerFull();
+  }
+
+  function closeTrailerFull() {
+    const overlay = document.getElementById('trailer-overlay');
+    overlay.classList.remove('show');
+    document.getElementById('trailer-player').innerHTML = '';
+  }
+
+  // ============ WATCH PROVIDERS (where to watch) ============
+  // Friendly labels for each provider type
+  const PROVIDER_LABELS = {
+    flatrate: { label: 'STREAMING', color: 'var(--neon-green)' },
+    free: { label: 'GRÁTIS', color: 'var(--neon-yellow)' },
+    ads: { label: 'GRÁTIS C/ ANÚNCIOS', color: 'var(--neon-yellow)' },
+    rent: { label: 'ALUGAR', color: 'var(--neon-cyan)' },
+    buy: { label: 'COMPRAR', color: 'var(--neon-pink)' }
+  };
+
+  // ============ VHS ENCARTE HELPERS (specs, classificação, barcode) ============
+
+  // Determina o "selo de classificação" antigo baseado no rating e no adult flag
+  // Mapeia vote_average + adult flag pra um valor estimado já que TMDB não dá essa info direta
+  function pickAgeSeal(movie) {
+    if (movie.adult) return { age: '18', label: 'IMPRÓPRIO MENORES DE 18', cls: '18' };
+    const genres = (movie.genres || []).map(g => g.id);
+    const HORROR = 27, THRILLER = 53, WAR = 10752, CRIME = 80;
+    const violentGenre = genres.some(id => [HORROR, THRILLER, WAR, CRIME].includes(id));
+    // Heurística aproximada — TMDB não expõe a classificação BR sem outra chamada cara
+    if (violentGenre && genres.includes(HORROR)) return { age: '16', label: 'NÃO RECOMENDADO MENORES DE 16', cls: '16' };
+    if (violentGenre) return { age: '14', label: 'NÃO RECOMENDADO MENORES DE 14', cls: '14' };
+    if (genres.includes(THRILLER) || genres.includes(CRIME)) return { age: '12', label: 'NÃO RECOMENDADO MENORES DE 12', cls: '12' };
+    const ANIMATION = 16, FAMILY = 10751;
+    if (genres.includes(ANIMATION) || genres.includes(FAMILY)) return { age: 'L', label: 'LIVRE PARA TODOS OS PÚBLICOS', cls: 'L' };
+    if (genres.includes(10749 /* Romance */) || genres.includes(35 /* Comedy */)) return { age: '10', label: 'NÃO RECOMENDADO MENORES DE 10', cls: '10' };
+    return { age: '12', label: 'NÃO RECOMENDADO MENORES DE 12', cls: '12' };
+  }
+
+  function renderAgeSeal(movie) {
+    const s = pickAgeSeal(movie);
+    return `
+      <div class="age-seal-wrap">
+        <div class="age-seal age-seal-${s.cls}" title="${s.label}">
+          <div class="age-seal-num">${s.age}</div>
+          <div class="age-seal-sub">${s.cls === 'L' ? 'LIVRE' : 'ANOS'}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // VHS specs row (Hi-Fi, NTSC, Colorido, Dolby) — sempre os mesmos pra todo filme,
+  // porque na época toda fita "boa" tinha esses selos
+  function renderVhsSpecs(movie) {
+    const isOld = movie.release_date && parseInt(movie.release_date.slice(0,4)) < 1965;
+    return `
+      <div class="vhs-specs">
+        ${isOld ? '<span class="vhs-spec bw">B&amp;W</span>' : '<span class="vhs-spec color">COLORIDO</span>'}
+        <span class="vhs-spec hifi">★ Hi-Fi STEREO</span>
+        <span class="vhs-spec ntsc">NTSC</span>
+        <span class="vhs-spec dolby">DOLBY SURROUND</span>
+        <span class="vhs-spec sp">SP / 120 MIN</span>
+      </div>
+    `;
+  }
+
+  // Barcode at the bottom (purely visual — random widths for that 90s feel)
+  function renderBarcode(movie) {
+    // Deterministic "random" widths based on movie.id so it doesn't reflow on each render
+    const seed = movie.id || 1;
+    let bars = '';
+    let s = seed;
+    for (let i = 0; i < 50; i++) {
+      s = (s * 1103515245 + 12345) & 0x7fffffff;
+      const w = 1 + (s % 4);
+      bars += `<div class="bar" style="width:${w}px"></div>`;
+    }
+    const upc = String(seed).padStart(12, '0').slice(0, 12);
+    return `
+      <div class="vhs-barcode">
+        <div class="barcode-lines">${bars}</div>
+        <div class="barcode-text">
+          <span class="small">VHS · ${movie.original_language ? movie.original_language.toUpperCase() : 'XX'} · NTSC</span>
+          ${upc.slice(0,1)} ${upc.slice(1,7)} ${upc.slice(7,12)}
+        </div>
+      </div>
+    `;
+  }
+
+
+  // Render the "where to watch" section for the current country
+  function renderWatchProviders(providersData, movieTitle) {
+    // Extract country code from state.country (e.g. "BR-pt-BR" → "BR")
+    const countryCode = state.country.split('-')[0];
+    const results = providersData?.results || {};
+    const countryData = results[countryCode];
+
+    if (!countryData) {
+      // No providers for this country — show a friendly message + JustWatch search link
+      const searchUrl = `https://www.justwatch.com/${countryCode.toLowerCase()}/busca?q=${encodeURIComponent(movieTitle)}`;
+      return `
+        <div class="watch-section">
+          <h3>📺 ONDE ASSISTIR</h3>
+          <div class="watch-empty">
+            Não localizei provedores no seu país (${countryCode}).
+            <a href="${searchUrl}" target="_blank" rel="noopener" class="watch-justwatch-link">
+              ▶ Buscar no JustWatch ↗
+            </a>
+          </div>
+          <div class="watch-attribution">dados via JustWatch</div>
+        </div>
+      `;
+    }
+
+    const tmdbLink = countryData.link;
+    const sections = [];
+
+    // Order matters: flatrate first (most useful), then free, ads, rent, buy
+    ['flatrate', 'free', 'ads', 'rent', 'buy'].forEach(type => {
+      const items = countryData[type];
+      if (!items || !items.length) return;
+      const cfg = PROVIDER_LABELS[type];
+      sections.push(`
+        <div class="watch-row">
+          <span class="watch-label" style="color:${cfg.color}; border-color:${cfg.color}">${cfg.label}</span>
+          <div class="watch-providers">
+            ${items.map(p => `
+              <a href="${tmdbLink || '#'}" target="_blank" rel="noopener" class="watch-provider" title="${escapeAttr(p.provider_name)}">
+                ${p.logo_path
+                  ? `<img src="https://image.tmdb.org/t/p/w92${p.logo_path}" alt="${escapeAttr(p.provider_name)}" loading="lazy">`
+                  : `<div class="watch-provider-fallback">${escapeHtml(p.provider_name)}</div>`}
+                <span class="watch-provider-name">${escapeHtml(p.provider_name)}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `);
+    });
+
+    if (!sections.length) {
+      const searchUrl = `https://www.justwatch.com/${countryCode.toLowerCase()}/busca?q=${encodeURIComponent(movieTitle)}`;
+      return `
+        <div class="watch-section">
+          <h3>📺 ONDE ASSISTIR</h3>
+          <div class="watch-empty">
+            Nenhum provedor encontrado para este país.
+            <a href="${searchUrl}" target="_blank" rel="noopener" class="watch-justwatch-link">
+              ▶ Buscar no JustWatch ↗
+            </a>
+          </div>
+          <div class="watch-attribution">dados via JustWatch</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="watch-section">
+        <h3>📺 ONDE ASSISTIR ${countryCode ? `<span class="watch-country">[${countryCode}]</span>` : ''}</h3>
+        ${sections.join('')}
+        ${tmdbLink ? `<a href="${tmdbLink}" target="_blank" rel="noopener" class="watch-more">ver mais detalhes no JustWatch ↗</a>` : ''}
+        <div class="watch-attribution">dados de streaming via JustWatch</div>
+      </div>
+    `;
+  }
+
+  // ============ MOVIE DETAIL MODAL ============
+  // 🎲 EASTER EGG: chewed/jammed tape
+  function showChewedTape(realMovieId) {
+    sfx.glitch();
+    const overlay = document.getElementById('modal-overlay');
+    const content = document.getElementById('modal-content');
+    overlay.classList.add('show');
+    content.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="chewed-tape">
+        <div class="chewed-glitch-bars"></div>
+        <div class="chewed-content">
+          <div class="chewed-icon">📼</div>
+          <div class="chewed-title">FITA MASTIGADA!</div>
+          <div class="chewed-msg">
+            Essa fita foi mastigada pelo videocassete<br>
+            do cliente anterior.
+          </div>
+          <div class="chewed-tracking">═══ TRACKING ERROR ═══</div>
+          <button class="chewed-fix-btn" onclick="cleanHeads(${realMovieId})">
+            🧽 LIMPAR O CABEÇOTE
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function cleanHeads(realMovieId) {
+    sfx.static(0.3);
+    const overlay = document.getElementById('modal-overlay');
+    const content = document.getElementById('modal-content');
+    // Flash effect
+    overlay.classList.add('cleaning');
+    awardPoints(2, 'limpou o cabeçote');
+    setTimeout(() => {
+      overlay.classList.remove('cleaning');
+      // Now actually open the movie
+      openMovieRaw(realMovieId);
+    }, 700);
+  }
+
+  async function openMovie(movieId) {
+    sfx.clunk();
+    // 🎲 EASTER EGG: 2% chance of "chewed tape" glitch
+    if (Math.random() < 0.02 && !state.chewedRecently) {
+      state.chewedRecently = true;
+      setTimeout(() => { state.chewedRecently = false; }, 60000); // cooldown
+      return showChewedTape(movieId);
+    }
+    return openMovieRaw(movieId);
+  }
+
+  async function openMovieRaw(movieId) {
+    const overlay = document.getElementById('modal-overlay');
+    const content = document.getElementById('modal-content');
+    overlay.classList.add('show');
+    content.innerHTML = '<div class="loading" style="padding:60px">Carregando fita...</div>';
+
+    try {
+      const [movie, credits, keywords, videos, recommendations, providers] = await Promise.all([
+        tmdbFetch(`/movie/${movieId}`),
+        tmdbFetch(`/movie/${movieId}/credits`),
+        tmdbFetch(`/movie/${movieId}/keywords`),
+        fetchTrailers(movieId),
+        tmdbFetch(`/movie/${movieId}/recommendations`).catch(() => ({ results: [] })),
+        tmdbFetchNoLang(`/movie/${movieId}/watch/providers`).catch(() => ({ results: {} }))
+      ]);
+
+      const poster = movie.poster_path
+        ? `<img class="modal-poster" src="${IMG_LARGE}${movie.poster_path}" alt="">`
+        : `<div class="vhs-no-poster" style="margin:0">SEM CAPA</div>`;
+      const year = movie.release_date ? movie.release_date.slice(0, 4) : '????';
+      const runtime = movie.runtime ? `${movie.runtime} MIN` : '';
+      const rating = movie.vote_average ? `★ ${movie.vote_average.toFixed(1)}` : '';
+      const director = (credits.crew || []).find(c => c.job === 'Director');
+      const isFav = state.favorites.some(f => f.id === movie.id);
+      const cast = (credits.cast || []).slice(0, 10);
+      const kws = (keywords.keywords || []).slice(0, 12);
+      const trailer = pickBestTrailer(videos);
+      state.trailerTitles[movie.id] = movie.title;
+
+      content.innerHTML = `
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="modal-content">
+          <div>
+            ${poster}
+            <div class="modal-actions" style="margin-top:10px; flex-direction:column">
+              ${trailer ? `
+                <button class="trailer-btn" onclick="playTrailer('${trailer.key}', ${movie.id})">
+                  ▶ VER TRAILER
+                </button>
+              ` : `
+                <button class="trailer-btn" disabled style="opacity:0.4; cursor:not-allowed" title="Sem trailer disponível">
+                  ✕ SEM TRAILER
+                </button>
+              `}
+              <button onclick='toggleFavorite(${JSON.stringify({id:movie.id,title:movie.title,poster_path:movie.poster_path,release_date:movie.release_date}).replace(/'/g,"&apos;")})'>
+                ${isFav ? '★ NA ESTANTE' : '☆ ADICIONAR À ESTANTE'}
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="modal-title-row">
+              ${renderAgeSeal(movie)}
+              <div class="modal-title-text">
+                <div class="modal-title">${escapeHtml(movie.title)}</div>
+                ${movie.original_title && movie.original_title !== movie.title ? `<div class="modal-original-title">"${escapeHtml(movie.original_title)}"</div>` : ''}
+              </div>
+            </div>
+            <div class="modal-meta">
+              <span>${year}</span>
+              ${runtime ? `<span>${runtime}</span>` : ''}
+              ${rating ? `<span class="rating">${rating}</span>` : ''}
+              ${movie.original_language ? `<span>${movie.original_language.toUpperCase()}</span>` : ''}
+            </div>
+            ${renderVhsSpecs(movie)}
+            <div class="modal-genres">
+              ${(movie.genres || []).map(g => `<span class="genre-tag" onclick="addGenreFromModal(${g.id})" title="filtrar por este gênero">${escapeHtml(g.name)}</span>`).join('')}
+            </div>
+            ${kws.length ? `
+              <div class="modal-keywords">
+                ${kws.map(k => `<span class="kw-tag" onclick="addKeywordFromModal(${k.id}, '${escapeAttr(k.name)}')" title="filtrar por esta temática">#${escapeHtml(k.name)}</span>`).join('')}
+              </div>
+            ` : ''}
+            ${director ? `<div style="color:var(--neon-cyan); margin-bottom:10px;">Direção: <strong style="color:var(--neon-yellow); cursor:pointer" onclick="closeModal(); openPerson(${director.id})">${escapeHtml(director.name)}</strong></div>` : ''}
+            <div class="modal-overview">${escapeHtml(movie.overview || 'Sinopse não disponível.')}</div>
+            ${renderWatchProviders(providers, movie.title)}
+            ${cast.length ? `
+              <div class="cast-section">
+                <h3>★ ELENCO PRINCIPAL ★</h3>
+                <div class="cast-grid">
+                  ${cast.map(c => `
+                    <div class="cast-member" onclick="closeModal(); openPerson(${c.id})">
+                      ${c.profile_path
+                        ? `<img src="${IMG_BASE}${c.profile_path}" alt="" loading="lazy">`
+                        : `<div style="aspect-ratio:2/3; background:var(--neon-purple); display:flex; align-items:center; justify-content:center; color:white; font-size:24px; margin-bottom:5px">?</div>`}
+                      <div class="name">${escapeHtml(c.name)}</div>
+                      <div class="character">${escapeHtml(c.character || '')}</div>
+                    </div>`).join('')}
+                </div>
+              </div>` : ''}
+            ${(recommendations.results || []).length ? `
+              <div class="recs-section">
+                <h3>◢ FITAS SEMELHANTES ◣</h3>
+                <div class="recs-grid">
+                  ${recommendations.results.slice(0, 12).map(r => `
+                    <div class="rec-card" onclick="openMovie(${r.id})">
+                      ${r.poster_path
+                        ? `<img src="${IMG_BASE}${r.poster_path}" alt="" loading="lazy">`
+                        : `<div class="rec-no-poster">SEM CAPA</div>`}
+                      <div class="rec-title">${escapeHtml(r.title)}</div>
+                      <div class="rec-year">${r.release_date ? r.release_date.slice(0,4) : '????'}</div>
+                    </div>`).join('')}
+                </div>
+              </div>` : ''}
+            ${renderBarcode(movie)}
+          </div>
+        </div>`;
+    } catch (err) {
+      content.innerHTML = `<button class="modal-close" onclick="closeModal()">×</button><div class="error-msg">⚠ ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function addKeywordFromModal(id, name) {
+    addKeyword(id, name);
+    closeModal();
+    switchView('filters');
+  }
+
+  function addGenreFromModal(id) {
+    if (!state.filters.genres.includes(id)) state.filters.genres.push(id);
+    closeModal();
+    switchView('filters');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+
+  // ============ UTILS ============
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
+  function escapeAttr(s) { return escapeHtml(s).replace(/'/g, "\\'"); }
+
+  init();
+</script>
+
+<!-- VHS FOOTER with hidden cine prive door -->
+<footer class="vhs-footer">
+  <div class="footer-line">
+    <span>★ VHS RENTAL ★ ESTABELECIDO EM 1989 ★</span>
+    <span class="cine-door" onclick="enterCinePrive()" title="...">▮</span>
+    <span>★ NÃO ESQUEÇA DE REBOBINAR ★</span>
+  </div>
+</footer>
+
+</body>
+</html>
